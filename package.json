@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "express": "^4.12.4",
-    "socket.io": "^1.7.2"
+    "socket.io": "^1.7.2",
+    "browserify": "^14.0.0"
   }
 }
