@@ -1,0 +1,14 @@
+{
+  "name": "web-games",
+  "version": "1.0.0",
+  "description": "web based, mobile friendly online game",
+  "main": "server.js",
+  "author": {
+    "name": "Penguin",
+    "email": "zliyong@gmail.com"
+  },
+  "dependencies": {
+    "express": "^4.12.4",
+    "socket.io": "^1.7.2"
+  }
+}
