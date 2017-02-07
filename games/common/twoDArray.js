@@ -21,7 +21,7 @@ module.exports = class TwoDArray {
 
     foreach(cb) {
         if (cb) {
-            for (let y = 0; y < this.array.length; x++) {
+            for (let y = 0; y < this.array.length; y++) {
                 for (let x = 0; x < this.array[y].length; y++) {
                     if (this.array[y][x]) {
                         cb(this.array[y][x], x, y);

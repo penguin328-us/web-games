@@ -3,6 +3,7 @@ const TwoDArray = require("../common/twoDArray");
 const side = require("./side");
 const pieceType = require("./pieceType");
 const utils = require("./utils");
+const Callback = require("../../common/callback");
 
 const piecesDef = [
     {
@@ -55,6 +56,7 @@ module.exports = class Chess {
     constructor() {
         this.board = new TwoDArray(9, 10);
         this.turn = side.red;
+        this.winCallback = new Callback();
     }
 
     reset() {
@@ -72,9 +74,31 @@ module.exports = class Chess {
                 });
             });
         });
+        this.turn = side.red;
     }
 
     takeStep(pos1, pos2) {
+        const availableSteps = utils.getAvailableSteps(this.chessBoard, pos1);
+        const piece = this.chessBoard.get(pos1.x, pos1.y);
+        if (utils.isPosInArray(pos2, availableSteps.runSteps)) {
+            this.makeTurn(piece, pos1, pos2);
+        }
+        else if (utils.isPosInArray(pos2, availableSteps.eatSteps)) {
+            const eated = this.chessBoard.get(pos2.x, pos2.y);
+            if (eated.pieceType === pieceType.king) {
+                this.winCallback.invoke(this.turn);
+            }
+            this.makeTurn(piece, pos1, pos2);
+        }
+    }
 
+    makeTurn(piece, pos1, pos2) {
+        this.chessBoard.set(pos2.x, pos2.y, piece);
+        this.chessBoard.set(pos1.x, pos1.y, undefined);
+        this.turn = this.turn === side.red ? side.black : side.red;
+    }
+    
+    onWin(cb){
+        this.winCallback.add(cb);
     }
 };
