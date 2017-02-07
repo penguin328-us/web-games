@@ -1,5 +1,5 @@
 "use strict";
-const side = require("./side");
+const role = require("./role");
 const pieceType = require("./pieceType");
 
 const maxX = 8;
@@ -88,7 +88,7 @@ function getRookAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
         while (isPosInBoard(step)) {
             const p = chessBoard.get(step.x, step.y);
             if (p) {
-                if(p.side != piece.side){
+                if(p.role != piece.role){
                     eatSteps.push(step);
                 }
                 break;
@@ -132,7 +132,7 @@ function getHorseAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
                 if (!p) {
                     runSteps.push(step);
                 }
-                else if (p.side != piece.side) {
+                else if (p.role != piece.role) {
                     eatSteps.push(step);
                 }
             }
@@ -181,7 +181,7 @@ function getKingAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 }
 
 function getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, dirs, range) {
-    if (piece.side === side.black && range) {
+    if (piece.role === role.black && range) {
         const minY = maxY - range.maxY;
         range.maxY = maxY - range.minY;
         range.minY = minY;
@@ -194,7 +194,7 @@ function getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, dirs, range) {
             if (!p) {
                 runSteps.push(step);
             }
-            else if (p.side !== piece.side) {
+            else if (p.role !== piece.role) {
                 eatSteps.push(step);
             }
         }
@@ -209,7 +209,7 @@ function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
             const p = chessBoard.get(step.x, step.y);
             if (p) {
                 if (eat) {
-                    if (p.side != piece.side) {
+                    if (p.role != piece.role) {
                         eatSteps.push(step);
                     }
                     break;
@@ -231,10 +231,10 @@ function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 function getPawnAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     const dirs = [{
         x: 0,
-        y: piece.side === side.black ? -1 : 1
+        y: piece.role === role.black ? -1 : 1
     }];
-    if ((piece.side === side.red && pos.y > 4) ||
-        (piece.side === side.black && pos.y < 5)) {
+    if ((piece.role === role.red && pos.y > 4) ||
+        (piece.role === role.black && pos.y < 5)) {
         dirs.push({
             x: -1,
             y: 0

@@ -1,6 +1,6 @@
 "use strict";
 const TwoDArray = require("../common/twoDArray");
-const side = require("./side");
+const role = require("./role");
 const pieceType = require("./pieceType");
 const utils = require("./utils");
 const Callback = require("../../common/callback");
@@ -55,7 +55,7 @@ const piecesDef = [
 module.exports = class Chess {
     constructor() {
         this.board = new TwoDArray(9, 10);
-        this.turn = side.red;
+        this.turn = role.red;
         this.winCallback = new Callback();
     }
 
@@ -65,16 +65,16 @@ module.exports = class Chess {
         piecesDef.forEach((def) => {
             def.positions.forEach((p) => {
                 self.board.set(p.x, p.y, {
-                    side: side.red,
+                    role: role.red,
                     pieceType: def.pieceType
                 });
                 self.board.set(p.x, 9 - p.y, {
-                    side: side.black,
+                    role: role.black,
                     pieceType: def.pieceType
                 });
             });
         });
-        this.turn = side.red;
+        this.turn = role.red;
     }
 
     takeStep(pos1, pos2) {
@@ -95,7 +95,7 @@ module.exports = class Chess {
     makeTurn(piece, pos1, pos2) {
         this.chessBoard.set(pos2.x, pos2.y, piece);
         this.chessBoard.set(pos1.x, pos1.y, undefined);
-        this.turn = this.turn === side.red ? side.black : side.red;
+        this.turn = this.turn === role.red ? role.black : role.red;
     }
     
     onWin(cb){

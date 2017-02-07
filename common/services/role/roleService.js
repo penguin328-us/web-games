@@ -15,6 +15,7 @@ module.exports = class RoleService {
     constructor(room, rolesDef) {
         this.room = room;
         this.roles = {};
+        this.onRoleChangedCallback = new Callback();
         const self = this;
         rolesDef.forEach((e) => {
             self.roles[e.value] = {
@@ -27,6 +28,7 @@ module.exports = class RoleService {
             if (self.roles[role] && self.roles[role].people.length < self.roles[role].maxCount) {
                 self.removePerson(person);
                 self.roles[role].people.push(person);
+                self.onRoleChangedCallback(person, role);
                 person.emit(roleEvents.ackRoleChanged, role);
                 room.broadcast(roleEvents.roleChangeMessage, {
                     displayName: person.displayName,
@@ -45,10 +47,14 @@ module.exports = class RoleService {
         const self = this;
         Object.keys(this.roles).forEach((role) => {
             if (self.roles[role].people.length < self.roles[role].maxCount) {
-                availableRoles.push(role)
+                availableRoles.push(role);
             }
         });
         return availableRoles;
+    }
+
+    onRoleChanged(cb){
+        this.onRoleChangedCallback.add(cb);
     }
 
     getPerson(role) {
@@ -68,4 +74,4 @@ module.exports = class RoleService {
             }
         });
     }
-}
+};
