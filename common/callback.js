@@ -5,9 +5,9 @@ module.exports = class Callback {
         this.callback = [];
     }
 
-    invoke(...args) {
+    invoke() {
         this.callback.forEach((cb) => {
-            cb.apply(this, args);
+            cb.apply(this, arguments);
         });
     }
 
@@ -16,4 +16,4 @@ module.exports = class Callback {
             this.callback.push(cb);
         }
     }
-}
+};
