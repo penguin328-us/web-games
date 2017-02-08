@@ -77,24 +77,27 @@ module.exports = class Chess {
         this.turn = role.red;
     }
 
-    takeStep(pos1, pos2) {
-        const availableSteps = utils.getAvailableSteps(this.chessBoard, pos1);
-        const piece = this.chessBoard.get(pos1.x, pos1.y);
-        if (utils.isPosInArray(pos2, availableSteps.runSteps)) {
-            this.makeTurn(piece, pos1, pos2);
+    takeStep(from, to) {
+        const availableSteps = utils.getAvailableSteps(this.board, from);
+        const piece = this.board.get(from.x, from.y);
+        if (utils.isPosInArray(to, availableSteps.runSteps)) {
+            this.makeTurn(piece, from, to);
+            return true;
         }
-        else if (utils.isPosInArray(pos2, availableSteps.eatSteps)) {
-            const eated = this.chessBoard.get(pos2.x, pos2.y);
+        else if (utils.isPosInArray(to, availableSteps.eatSteps)) {
+            const eated = this.board.get(to.x, to.y);
             if (eated.pieceType === pieceType.king) {
                 this.winCallback.invoke(this.turn);
             }
-            this.makeTurn(piece, pos1, pos2);
+            this.makeTurn(piece, from, to);
+            return true;
         }
+        return false;
     }
 
-    makeTurn(piece, pos1, pos2) {
-        this.chessBoard.set(pos2.x, pos2.y, piece);
-        this.chessBoard.set(pos1.x, pos1.y, undefined);
+    makeTurn(piece, from, to) {
+        this.board.set(to.x, to.y, piece);
+        this.board.set(from.x, from.y, undefined);
         this.turn = this.turn === role.red ? role.black : role.red;
     }
     

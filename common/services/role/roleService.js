@@ -28,7 +28,7 @@ module.exports = class RoleService {
             if (self.roles[role] && self.roles[role].people.length < self.roles[role].maxCount) {
                 self.removePerson(person);
                 self.roles[role].people.push(person);
-                self.onRoleChangedCallback(person, role);
+                self.onRoleChangedCallback.invoke(person, role);
                 person.emit(roleEvents.ackRoleChanged, role);
                 room.broadcast(roleEvents.roleChangeMessage, {
                     displayName: person.displayName,
@@ -73,5 +73,15 @@ module.exports = class RoleService {
                 self.roles[role].people.splice(index, 1);
             }
         });
+    }
+    
+    getRole(person){
+        const roles = Object.keys(this.roles);
+        for(let i=0;i<roles.length;i++){
+            if(this.roles[roles[i]].people.indexOf(person)>=0){
+                return roles[i];
+            }
+        }
+        return undefined;
     }
 };
