@@ -26,7 +26,7 @@ module.exports = class Room {
         });
         this.onEnterRoomCallback.invoke(person);
     }
-    onEnterRoom(cb){
+    onEnterRoom(cb) {
         this.onEnterRoomCallback.add(cb);
     }
 
@@ -41,7 +41,7 @@ module.exports = class Room {
         this.onLeftRoomCallback.invoke(person);
     }
 
-    onLeftRoom(cb){
+    onLeftRoom(cb) {
         this.onLeftRoomCallback.add(cb);
     }
 
@@ -64,4 +64,4 @@ module.exports = class Room {
     onEmpty(cb) {
         this.onEmptyCallback.add(cb);
     }
-}
+};

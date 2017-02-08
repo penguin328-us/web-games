@@ -13,9 +13,5 @@ server.listen(process.env.PORT || 8080, process.env.IP || "0.0.0.0", function(){
   console.log("web game server listening at", addr.address + ":" + addr.port);
 });
 
-const ChatService = require("./common/services/chat/chatService.js")
-const RoomService = require("./common/services/room/roomService.js");
-const roomService = new RoomService(io,"/chess");
-roomService.onRoomCreate((room)=>{
-  const chatService = new ChatService(room);
-});
+const chessServer = require("./games/chinese-chess/chessServer");
+chessServer.start(io);

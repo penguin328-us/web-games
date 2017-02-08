@@ -11,7 +11,7 @@ module.exports = class GameServiceBase {
         this.rolesReadyWaiter = new RolesReadyWaiter(requiredRoles);
 
         const self = this;
-        this.roleService.onRoleChangedCallback((person, role) => {
+        this.roleService.onRoleChanged((person, role) => {
             self.rolesReadyWaiter.resetReady(person);
         });
         this.room.onLeftRoom((person) => {

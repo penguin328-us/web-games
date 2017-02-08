@@ -26,7 +26,7 @@ module.exports = class GameClientBase {
 
         this.on(gameEventsBase.gameCompleted, (data) => {
             self.onGameCompletedCallback.invoke(data);
-        })
+        });
     }
 
     ready() {

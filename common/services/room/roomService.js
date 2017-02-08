@@ -1,45 +1,45 @@
 "use strict";
 
 const roomEvents = require("./roomEvents.js");
-const Room = require("../../room.js")
+const Room = require("../../room.js");
 const Callback = require("../../callback.js");
-const Person = require("../../person.js")
+const Person = require("../../person.js");
 
-module.exports = class RoomService{
-    constructor(io,namespace){
+module.exports = class RoomService {
+    constructor(io, namespace) {
         this.rooms = {};
         this.newRoomCallback = new Callback();
         var self = this;
-        io.of(namespace).on("connection", (socket)=>{
-            socket.on(roomEvents.joinRequest,(data)=>{
-                if(data.displayName && data.roomNumber){
-                    const person = new Person(data.displayName,socket);
-                    self.joinRoom(person,data.roomNumber);
+        io.of(namespace).on("connection", (socket) => {
+            socket.on(roomEvents.joinRequest, (data) => {
+                if (data.displayName && data.roomNumber) {
+                    const person = new Person(data.displayName, socket);
+                    self.joinRoom(person, data.roomNumber);
                 }
             });
-        })
+        });
     }
 
-    joinRoom(person,roomNumber){
+    joinRoom(person, roomNumber) {
         let room = this.rooms[roomNumber];
-        if(!room){
+        if (!room) {
             room = this.createRoom(roomNumber);
         }
         room.addPerson(person);
         person.emit(roomEvents.joinAck);
     }
 
-    createRoom(roomNumber){
+    createRoom(roomNumber) {
         const room = new Room();
         this.rooms[roomNumber] = room;
         console.log("room created " + roomNumber);
-        room.onEnterRoom((person)=>{
-            room.broadcast(roomEvents.joinMessage,person.displayName);
+        room.onEnterRoom((person) => {
+            room.broadcast(roomEvents.joinMessage, person.displayName);
         });
-        room.onLeftRoom((person)=>{
-            room.broadcast(roomEvents.leaveMessage,person.displayName);
+        room.onLeftRoom((person) => {
+            room.broadcast(roomEvents.leaveMessage, person.displayName);
         });
-        room.onEmpty(()=>{
+        room.onEmpty(() => {
             delete this.rooms[roomNumber];
             console.log("room deleted " + roomNumber);
         });
@@ -47,7 +47,7 @@ module.exports = class RoomService{
         return room;
     }
 
-    onRoomCreate(cb){
+    onRoomCreate(cb) {
         this.newRoomCallback.add(cb);
     }
-}
+};

@@ -2,7 +2,6 @@
 
 const chessEvents = require("./chessEvents");
 const GameClientBase = require("../../common/game-service/gameClientBase");
-const role = require("../role");
 
 module.exports = class ChessClient extends GameClientBase {
     constructor(person) {
