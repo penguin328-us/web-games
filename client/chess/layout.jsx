@@ -1,16 +1,19 @@
 "use strict";
 
-import React from "react";
+const React = require("react");
+const ChessGame = require("./chessGame.jsx");
 
-export class Layout extends React.Component {
+module.exports = class Layout extends React.Component {
     render() {
         return (
             <table>
                 <tr>
-                    <td>game board</td>
+                    <td>
+                        <ChessGame width="900" height="1000" />
+                    </td>
                     <td>right field</td>
                 </tr>
             </table>
         );
     }
-}
+};
