@@ -11,10 +11,10 @@ module.exports = class GameServiceBase {
         this.rolesReadyWaiter = new RolesReadyWaiter(requiredRoles);
 
         const self = this;
-        this.roleService.onRoleChanged((person, role) => {
+        this.roleService.onRoleChanged.add((person, role) => {
             self.rolesReadyWaiter.resetReady(person);
         });
-        this.room.onLeftRoom((person) => {
+        this.room.onLeftRoom.add((person) => {
             self.rolesReadyWaiter.resetReady(person);
         });
 

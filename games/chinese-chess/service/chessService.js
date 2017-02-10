@@ -31,7 +31,7 @@ module.exports = class ChessService extends GameServiceBase {
             self.chess.reset();
             self.setGameStarted(self.getGameState());
         });
-        this.room.onEnterRoom((person) => {
+        this.room.onEnterRoom.add((person) => {
             if (self.gameStatus === gameStatus.running) {
                 self.setGameStarted(self.getGameState(), person);
             }

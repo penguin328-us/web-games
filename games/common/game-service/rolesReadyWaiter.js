@@ -6,7 +6,7 @@ module.exports = class RolesReadyWaiter {
     constructor(requiredRoles) {
         this.requiredRoles = requiredRoles || [];
         this.eventFired = false;
-        this.onReadyCallback = new Callback();
+        this.onReady = new Callback();
         this.readys = [];
     }
 
@@ -46,9 +46,5 @@ module.exports = class RolesReadyWaiter {
                 i--;
             }
         }
-    }
-
-    onReady(cb) {
-        this.onReadyCallback.add(cb);
     }
 };

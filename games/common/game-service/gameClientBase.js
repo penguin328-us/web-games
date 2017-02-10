@@ -6,10 +6,10 @@ const gameEventsBase = require("./gameEventsBase");
 module.exports = class GameClientBase {
     constructor(person) {
         this.person = person;
-        this.onReadyMessageCallback = new Callback();
-        this.onGameStateUpdatedCallback = new Callback();
-        this.onGameStartedCallback = new Callback();
-        this.onGameCompletedCallback = new Callback();
+        this.onReadyMessage = new Callback();
+        this.onGameStateUpdated = new Callback();
+        this.onGameStarted = new Callback();
+        this.onGameCompleted = new Callback();
 
         const self = this;
         this.on(gameEventsBase.readyMessage, (data) => {
@@ -31,21 +31,5 @@ module.exports = class GameClientBase {
 
     ready() {
         this.person.emit(gameEventsBase.ready);
-    }
-
-    onReadyMessage(cb) {
-        this.onReadyMessageCallback.add(cb);
-    }
-
-    onGameStateUpdated(cb) {
-        this.onGameStateUpdatedCallback.add(cb);
-    }
-
-    onGameStarted(cb) {
-        this.onGameStartedCallback.add(cb);
-    }
-
-    onGameCompleted(cb) {
-        this.onGameCompletedCallback.add(cb);
     }
 };

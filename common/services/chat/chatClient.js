@@ -6,10 +6,10 @@ const Callback = require("../../callback.js");
 module.exports = class ChatClient {
     constructor(person) {
         this.person = person;
-        this.onChatCallback = new Callback();
+        this.onChat = new Callback();
         self = this;
         this.person.on(chatEvents.chat, (data) => {
-            self.onChatCallback.invoke(data.displayName, data.message);
+            self.onChat.invoke(data.displayName, data.message);
         });
     }
 
@@ -17,7 +17,4 @@ module.exports = class ChatClient {
         this.person.emit(chatEvents.chat, message);
     }
 
-    onChat(callback) {
-        this.onChatCallback.add(callback);
-    }
 };

@@ -8,7 +8,7 @@ const Person = require("../../person.js");
 module.exports = class RoomService {
     constructor(io, namespace) {
         this.rooms = {};
-        this.newRoomCallback = new Callback();
+        this.onRoomCreated = new Callback();
         var self = this;
         io.of(namespace).on("connection", (socket) => {
             socket.on(roomEvents.joinRequest, (data) => {
@@ -33,21 +33,17 @@ module.exports = class RoomService {
         const room = new Room();
         this.rooms[roomNumber] = room;
         console.log("room created " + roomNumber);
-        room.onEnterRoom((person) => {
+        room.onEnterRoom.add((person) => {
             room.broadcast(roomEvents.joinMessage, person.displayName);
         });
-        room.onLeftRoom((person) => {
+        room.onLeftRoom.add((person) => {
             room.broadcast(roomEvents.leaveMessage, person.displayName);
         });
-        room.onEmpty(() => {
+        room.onEmpty.add(() => {
             delete this.rooms[roomNumber];
             console.log("room deleted " + roomNumber);
         });
-        this.newRoomCallback.invoke(room);
+        this.onRoomCreated.invoke(room);
         return room;
-    }
-
-    onRoomCreate(cb) {
-        this.newRoomCallback.add(cb);
     }
 };

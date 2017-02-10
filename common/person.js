@@ -8,9 +8,9 @@ module.exports = class Person {
         this.displayName = displayName;
 
         var self = this;
-        this.onDisconnectCallback = new Callback();
+        this.onDisconnect = new Callback();
         this.socket.on("disconnect", () => {
-            self.onDisconnectCallback.invoke();
+            self.onDisconnect.invoke();
         });
     }
 
@@ -20,9 +20,5 @@ module.exports = class Person {
 
     on(event, cb) {
         this.socket.on(event, cb);
-    }
-
-    onDisconnect(cb) {
-        this.onDisconnectCallback.add(cb);
     }
 };
