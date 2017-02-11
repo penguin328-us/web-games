@@ -2,6 +2,9 @@
 
 const React = require("react");
 
+// required attrs
+// space - number
+
 module.exports = class ChessBoard extends React.Component {
     render() {
         const space = this.props.space;

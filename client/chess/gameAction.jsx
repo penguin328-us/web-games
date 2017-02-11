@@ -67,7 +67,8 @@ module.exports = class Layout extends React.Component {
 
     handleStatusChange() {
         this.setState({
-            status: this.props.chessClient.currentStatus
+            status: this.props.chessClient.currentStatus,
+            hasReady: false
         });
     }
 

@@ -3,9 +3,11 @@
 const React = require("react");
 const ChessBoard = require("./chessBoard.jsx");
 const Chess = require("./chess.jsx");
+const ChessSelection = require("./chessSelection.jsx");
 const role = require("../../games/chinese-chess/role");
-const pieceType = require("../../games/chinese-chess/pieceType");
 const TwoDArray = require("../../games/common/twoDArray");
+const utils = require("../../games/chinese-chess/utils");
+const gameStatus = require("../../games/common/gameStatus");
 
 module.exports = class ChessGame extends React.Component {
     constructor(props) {
@@ -21,11 +23,16 @@ module.exports = class ChessGame extends React.Component {
         const latestGameState = client.chessClient.latestState;
         this.state = {
             role: client.roleClient.currentRole,
-            chess: latestGameState?new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array):undefined
+            chess: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
+            turn: latestGameState ? latestGameState.turn : undefined,
+            select: undefined,
+            runSteps: [],
+            eatSteps: []
         };
 
         this.handleRoleChange = this.handleRoleChange.bind(this);
         this.handleGameUpdate = this.handleGameUpdate.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     render() {
@@ -42,9 +49,10 @@ module.exports = class ChessGame extends React.Component {
 
         return (
             <div style={divStyle}>
-                <svg width={this.space*9} height={this.space*10} >
+                <svg width={this.space*9} height={this.space*10} onClick={this.handleClick} >
                     <ChessBoard space={this.space} />
                     <Chess space={this.space} chess={this.state.chess} rotate={this.state.role === role.black} />
+                    <ChessSelection space={this.space} select={this.state.select} runSteps={this.state.runSteps} eatSteps={this.state.eatSteps} rotate={this.state.role === role.black} />
                 </svg>
             </div>
         );
@@ -70,7 +78,60 @@ module.exports = class ChessGame extends React.Component {
 
     handleGameUpdate(gameState) {
         this.setState({
-            chess: new TwoDArray(gameState.board.x, gameState.board.y, gameState.board.array)
+            chess: new TwoDArray(gameState.board.x, gameState.board.y, gameState.board.array),
+            turn: gameState.turn,
+            select: undefined,
+            runSteps: [],
+            eatSteps: []
         });
+    }
+
+    handleClick(event) {
+        const pos = {
+            x: Math.floor(event.nativeEvent.clientX / this.space),
+            y: Math.floor(event.nativeEvent.clientY / this.space)
+        };
+
+        if (this.state.role === role.black) {
+            pos.x = utils.maxX - pos.x;
+            pos.y = utils.maxY - pos.y;
+        }
+
+        if (this.state.select) {
+            if (this.state.role === this.state.turn &&
+                this.state.chess.get(this.state.select.x, this.state.select.y).role === this.state.role &&
+                this.props.client.chessClient.currentStatus === gameStatus.running) {
+                if (utils.isPosInArray(pos, this.state.runSteps) || utils.isPosInArray(pos, this.state.eatSteps)) {
+                    this.props.client.chessClient.takeStep(this.state.select, pos);
+                }
+                else {
+                    this.setSelect(pos);
+                }
+            }
+            else {
+                this.setSelect(pos);
+            }
+        }
+        else {
+            this.setSelect(pos);
+        }
+    }
+
+    setSelect(pos) {
+        if (this.state.chess && this.state.chess.get(pos.x, pos.y)) {
+            const steps = utils.getAvailableSteps(this.state.chess, pos);
+            this.setState({
+                select: pos,
+                runSteps: steps.runSteps,
+                eatSteps: steps.eatSteps
+            });
+        }
+        else {
+            this.setState({
+                select: undefined,
+                runSteps: [],
+                eatSteps: [],
+            });
+        }
     }
 };

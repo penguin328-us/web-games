@@ -37,7 +37,7 @@ module.exports = class ChessService extends GameServiceBase {
             }
         });
         this.room.on(chessEvents.takeStep, (r, p, step) => {
-            if (this.roleService.getPerson(self.chess.turn) === p) {
+            if (this.roleService.getPerson(self.chess.turn) === p && this.gameStatus === gameStatus.running) {
                 if (self.chess.takeStep(step.from, step.to)) {
                     self.lastStep = step;
                     self.updateGameState(self.getGameState());
@@ -59,7 +59,7 @@ module.exports = class ChessService extends GameServiceBase {
     }
 
     markGameComplete(winRole) {
-        const person = self.roleService.getPerson(winRole);
+        const person = this.roleService.getPerson(winRole);
         this.gameStatus = gameStatus.completed;
         this.rolesReadyWaiter.reset();
         this.setGameCompleted({

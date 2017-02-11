@@ -80,17 +80,19 @@ module.exports = class Chess {
     takeStep(from, to) {
         const availableSteps = utils.getAvailableSteps(this.board, from);
         const piece = this.board.get(from.x, from.y);
-        if (utils.isPosInArray(to, availableSteps.runSteps)) {
-            this.makeTurn(piece, from, to);
-            return true;
-        }
-        else if (utils.isPosInArray(to, availableSteps.eatSteps)) {
-            const eated = this.board.get(to.x, to.y);
-            if (eated.pieceType === pieceType.king) {
-                this.winCallback.invoke(this.turn);
+        if (piece.role === this.turn) {
+            if (utils.isPosInArray(to, availableSteps.runSteps)) {
+                this.makeTurn(piece, from, to);
+                return true;
             }
-            this.makeTurn(piece, from, to);
-            return true;
+            else if (utils.isPosInArray(to, availableSteps.eatSteps)) {
+                const eated = this.board.get(to.x, to.y);
+                if (eated.pieceType === pieceType.king) {
+                    this.winCallback.invoke(this.turn);
+                }
+                this.makeTurn(piece, from, to);
+                return true;
+            }
         }
         return false;
     }
