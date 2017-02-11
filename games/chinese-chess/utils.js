@@ -181,7 +181,7 @@ function getKingAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 }
 
 function getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, dirs, range) {
-    if (piece.role === role.black && range) {
+    if (piece.role === role.red && range) {
         const minY = maxY - range.maxY;
         range.maxY = maxY - range.minY;
         range.minY = minY;
@@ -231,10 +231,10 @@ function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 function getPawnAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     const dirs = [{
         x: 0,
-        y: piece.role === role.black ? -1 : 1
+        y: piece.role === role.red ? -1 : 1
     }];
-    if ((piece.role === role.red && pos.y > 4) ||
-        (piece.role === role.black && pos.y < 5)) {
+    if ((piece.role === role.black && pos.y > 4) ||
+        (piece.role === role.red && pos.y < 5)) {
         dirs.push({
             x: -1,
             y: 0

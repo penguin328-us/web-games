@@ -16,6 +16,7 @@ module.exports = class RoleSelect extends React.Component {
         };
         this.handleRolechange = this.handleRolechange.bind(this);
         this.handleRoleMessage = this.handleRoleMessage.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
@@ -37,10 +38,17 @@ module.exports = class RoleSelect extends React.Component {
         });
 
         return (
-            <select>
+            <select onChange={this.handleChange}>
                 {options}
             </select>
         );
+    }
+
+    handleChange(event) {
+        const newValue = event.target.value;
+        if(newValue){
+            this.props.roleClient.changeRole(newValue);
+        }
     }
 
     handleRolechange(role) {

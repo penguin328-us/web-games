@@ -25,7 +25,7 @@ module.exports = class ChessService extends GameServiceBase {
         this.lastStep = undefined;
 
         const self = this;
-        this.rolesReadyWaiter.onReady(() => {
+        this.rolesReadyWaiter.onReady.add(() => {
             self.gameStatus = gameStatus.running;
             self.lastStep = undefined;
             self.chess.reset();
@@ -44,7 +44,7 @@ module.exports = class ChessService extends GameServiceBase {
                 }
             }
         });
-        this.room.on(chessEvents.surrend, (r, p, data) => {
+        this.room.on(chessEvents.surrender, (r, p, data) => {
             const rl = self.roleService.getRole(p);
             if (rl === role.black) {
                 self.markGameComplete(role.red);

@@ -32,7 +32,7 @@ module.exports = class RolesReadyWaiter {
             }
             if (allReady) {
                 this.eventFired = true;
-                this.onReadyCallback.invoke();
+                this.onReady.invoke();
             }
         }
     }

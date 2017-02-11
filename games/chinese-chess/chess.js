@@ -65,11 +65,11 @@ module.exports = class Chess {
         piecesDef.forEach((def) => {
             def.positions.forEach((p) => {
                 self.board.set(p.x, p.y, {
-                    role: role.red,
+                    role: role.black,
                     pieceType: def.pieceType
                 });
                 self.board.set(p.x, 9 - p.y, {
-                    role: role.black,
+                    role: role.red,
                     pieceType: def.pieceType
                 });
             });

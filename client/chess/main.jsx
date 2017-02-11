@@ -3,5 +3,8 @@
 const React = require("react");
 const ReactDom = require("react-dom");
 const Layout = require("./layout.jsx");
+const ChessGameClient = require("./chessGameClient");
 
-ReactDom.render(<Layout />, document.getElementById("container"));
+const client = new ChessGameClient(() => {
+    ReactDom.render(<Layout client ={client} />, document.getElementById("container"));
+});

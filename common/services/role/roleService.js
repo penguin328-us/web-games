@@ -30,15 +30,26 @@ module.exports = class RoleService {
                 self.roles[role].people.push(person);
                 self.onRoleChanged.invoke(person, role);
                 person.emit(roleEvents.ackRoleChanged, role);
-                room.broadcast(roleEvents.roleChangeMessage, {
-                    displayName: person.displayName,
-                    role: role,
-                    availableRoles: self.getAvailableRoles()
-                });
+                self.sendRoleChangeMessage(person, role);
             }
         });
         this.room.onLeftRoom.add((person) => {
             self.removePerson(person);
+        });
+        this.room.onEnterRoom.add((person) => {
+            person.emit(roleEvents.roleChangeMessage, {
+                displayName: undefined,
+                role: undefined,
+                availableRoles: self.getAvailableRoles()
+            });
+        });
+    }
+
+    sendRoleChangeMessage(person, role) {
+        this.room.broadcast(roleEvents.roleChangeMessage, {
+            displayName: person ? person.displayName : undefined,
+            role: role,
+            availableRoles: this.getAvailableRoles()
         });
     }
 
@@ -67,14 +78,15 @@ module.exports = class RoleService {
             let index = self.roles[role].people.indexOf(person);
             if (index >= 0) {
                 self.roles[role].people.splice(index, 1);
+                self.sendRoleChangeMessage();
             }
         });
     }
-    
-    getRole(person){
+
+    getRole(person) {
         const roles = Object.keys(this.roles);
-        for(let i=0;i<roles.length;i++){
-            if(this.roles[roles[i]].people.indexOf(person)>=0){
+        for (let i = 0; i < roles.length; i++) {
+            if (this.roles[roles[i]].people.indexOf(person) >= 0) {
                 return roles[i];
             }
         }
