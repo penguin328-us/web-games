@@ -38,9 +38,11 @@ module.exports = class RoleSelect extends React.Component {
         });
 
         return (
-            <select onChange={this.handleChange}>
-                {options}
-            </select>
+            <form  className="pure-form pure-form-stacked">
+                <select onChange={this.handleChange} style={{width:"80%"}}>
+                    {options}
+                </select>
+            </form>
         );
     }
 

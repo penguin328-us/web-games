@@ -9,7 +9,7 @@ const role = require("../../games/chinese-chess/role");
 // chessClient
 
 
-module.exports = class Layout extends React.Component {
+module.exports = class GameAction extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -27,12 +27,12 @@ module.exports = class Layout extends React.Component {
         if (this.state.role && this.state.role !== role.watcher) {
             if (this.state.status === gameStatus.running) {
                 return (
-                    <button onClick={this.handleSurrender}>Surrender</button>
+                    <button onClick={this.handleSurrender} className="pure-button" style={{backgroundColor:"rgb(223, 117, 20)", color:"white"}}>Surrender</button>
                 );
             }
             else {
                 return (
-                    <button onClick={this.handleReady} disabled={this.state.hasReady}>Ready</button>
+                    <button onClick={this.handleReady} disabled={this.state.hasReady} className="pure-button pure-button-primary">Ready</button>
                 );
 
             }

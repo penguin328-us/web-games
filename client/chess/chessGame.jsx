@@ -12,13 +12,6 @@ const gameStatus = require("../../games/common/gameStatus");
 module.exports = class ChessGame extends React.Component {
     constructor(props) {
         super(props);
-        this.space = Math.min(
-            Math.floor(this.props.width / 9),
-            Math.floor(this.props.height / 10)
-        );
-        if (this.space % 2 !== 0) {
-            this.space--;
-        }
         const client = this.props.client;
         const latestGameState = client.chessClient.latestState;
         this.state = {
@@ -36,6 +29,14 @@ module.exports = class ChessGame extends React.Component {
     }
 
     render() {
+        this.space = Math.min(
+            Math.floor(this.props.width / 9),
+            Math.floor(this.props.height / 10)
+        );
+        if (this.space % 2 !== 0) {
+            this.space--;
+        }
+        
         const leftPadding = Math.floor((this.props.width - this.space * 9) / 2);
         const topPadding = Math.floor((this.props.height - this.space * 10) / 2);
 

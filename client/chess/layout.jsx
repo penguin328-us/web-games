@@ -2,39 +2,67 @@
 
 const React = require("react");
 const ChessGame = require("./chessGame.jsx");
-const RoleSelect = require("../common/roleSelect.jsx");
-const GameAction = require("./gameAction.jsx");
-const role = require("../../games/chinese-chess/role");
+const RightPanel = require("./rightPanel.jsx");
 
-const allRoles = [{
-    displayName: "Red",
-    value: role.red
-}, {
-    displayName: "Black",
-    value: role.black
-}, {
-    displayName: "Watcher",
-    value: role.watcher
-}];
 
 module.exports = class Layout extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = this.getSizeState();
+        this.resizeHandler = this.resizeHandler.bind(this);
+    }
+
     render() {
         return (
             <table>
                 <tr>
                     <td>
-                        <ChessGame width="900" height="1000" client={this.props.client} />
+                        <ChessGame width={this.state.gameWidth} height={this.state.gameHeight} client={this.props.client} />
                     </td>
+                    <td style={{width:this.state.margin}} />
                     <td>
-                        <div>
-                            <RoleSelect allRoles={allRoles} defaultRole={role.watcher} roleClient={this.props.client.roleClient} />
-                        </div>
-                        <div>
-                            <GameAction roleClient={this.props.client.roleClient} chessClient={this.props.client.chessClient} />
-                        </div>
+                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} />
                     </td>
                 </tr>
             </table>
         );
+    }
+
+    getSizeState() {
+        const clientWidth = window.innerWidth - 20;
+        const clientHeight = window.innerHeight - 20;
+        if (clientWidth > 800) {
+            const gameWidth = Math.min(Math.round(clientHeight / 10 * 9), clientWidth - 200);
+            return {
+                gameWidth: gameWidth,
+                gameHeight: clientHeight,
+                panelWdith: Math.min(clientWidth - gameWidth - 10, gameWidth - 100),
+                panelHeight: clientHeight,
+                panelHidden: false,
+                margin:10
+            };
+        }
+        else {
+            return {
+                gameWidth: clientWidth,
+                gameHeight: clientHeight,
+                panelWdith: Math.min(clientWidth, 400),
+                panelHeight: clientHeight,
+                panelHidden: true,
+                margin:0
+            };
+        }
+    }
+
+    resizeHandler() {
+        this.setState(this.getSizeState());
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.resizeHandler);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.resizeHandler);
     }
 };
