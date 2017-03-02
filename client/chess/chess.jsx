@@ -17,7 +17,7 @@ module.exports = class Chess extends React.Component {
         if (this.props.chess) {
             this.props.chess.foreach((p, x, y) => {
                 pieces.push(
-                    <ChessPiece space={this.props.space} role={p.role} pieceType={p.pieceType} x={rotate?utils.maxX-x:x} y={rotate?utils.maxY-y:y} />
+                    <ChessPiece key={x.toString() + y.toString()} space={this.props.space} role={p.role} pieceType={p.pieceType} x={rotate?utils.maxX-x:x} y={rotate?utils.maxY-y:y} />
                 );
             });
         }

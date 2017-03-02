@@ -15,6 +15,7 @@ module.exports = class Layout extends React.Component {
     render() {
         return (
             <table>
+                <tbody>
                 <tr>
                     <td>
                         <ChessGame width={this.state.gameWidth} height={this.state.gameHeight} client={this.props.client} />
@@ -24,6 +25,7 @@ module.exports = class Layout extends React.Component {
                         <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} />
                     </td>
                 </tr>
+                </tbody>
             </table>
         );
     }
@@ -39,7 +41,7 @@ module.exports = class Layout extends React.Component {
                 panelWdith: Math.min(clientWidth - gameWidth - 10, gameWidth - 100),
                 panelHeight: clientHeight,
                 panelHidden: false,
-                margin:10
+                margin: 10
             };
         }
         else {
@@ -49,7 +51,7 @@ module.exports = class Layout extends React.Component {
                 panelWdith: Math.min(clientWidth, 400),
                 panelHeight: clientHeight,
                 panelHidden: true,
-                margin:0
+                margin: 0
             };
         }
     }

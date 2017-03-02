@@ -12,14 +12,15 @@ module.exports = class ChessBoard extends React.Component {
         const results = [];
         const strokeWidth = space <= 50 ? 1 : 2;
         const stroke = "black";
-
+        let key = 1;
+        
         // horizontal lines
         let x1 = start;
         let x2 = start + space * 8;
         for (let i = 0; i < 10; i++) {
             const y = start + i * space;
             results.push(
-                <line x1={x1} x2={x2} y1={y} y2={y} stroke={stroke} strokeWidth={strokeWidth} />
+                <line key={key++} x1={x1} x2={x2} y1={y} y2={y} stroke={stroke} strokeWidth={strokeWidth} />
             );
         }
 
@@ -29,19 +30,19 @@ module.exports = class ChessBoard extends React.Component {
         let y3 = y2 + space;
         let y4 = y3 + space * 4;
         results.push(
-            <line x1={start} x2={start} y1={y1} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
+            <line key={key++} x1={start} x2={start} y1={y1} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
         );
         for (let i = 1; i < 8; i++) {
             const x = start + i * space;
             results.push(
-                <line x1={x} x2={x} y1={y1} y2={y2} stroke={stroke} strokeWidth={strokeWidth} />
+                <line key={key++} x1={x} x2={x} y1={y1} y2={y2} stroke={stroke} strokeWidth={strokeWidth} />
             );
             results.push(
-                <line x1={x} x2={x} y1={y3} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
+                <line key={key++} x1={x} x2={x} y1={y3} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
             );
         }
         results.push(
-            <line x1={start + space*8} x2={start + space*8} y1={y1} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
+            <line key={key++} x1={start + space*8} x2={start + space*8} y1={y1} y2={y4} stroke={stroke} strokeWidth={strokeWidth} />
         );
 
         // X lines
@@ -51,10 +52,10 @@ module.exports = class ChessBoard extends React.Component {
         y2 = y1 + space * 2;
         [0, space * 7].forEach((v) => {
             results.push(
-                <line x1={x1} x2={x2} y1={y1 + v} y2={y2+v} stroke={stroke} strokeWidth={strokeWidth} />
+                <line key={key++} x1={x1} x2={x2} y1={y1 + v} y2={y2+v} stroke={stroke} strokeWidth={strokeWidth} />
             );
             results.push(
-                <line x1={x2} x2={x1} y1={y1 + v} y2={y2+v} stroke={stroke} strokeWidth={strokeWidth} />
+                <line key={key++} x1={x2} x2={x1} y1={y1 + v} y2={y2+v} stroke={stroke} strokeWidth={strokeWidth} />
             );
         });
 
@@ -127,7 +128,7 @@ module.exports = class ChessBoard extends React.Component {
                 if (x2 > start && x2 < xEnd) {
                     const d = `M ${x2+dir.x * length} ${y2} L ${x2} ${y2} L ${x2} ${y2 + dir.y*length}`;
                     results.push(
-                        <path d={d} stroke={stroke} strokeWidth={lineWidth} fill="none" />
+                        <path key={key++} d={d} stroke={stroke} strokeWidth={lineWidth} fill="none" />
                     );
                 }
             });
@@ -141,21 +142,21 @@ module.exports = class ChessBoard extends React.Component {
         x1 = start + space * 1.3;
         y1 = start + space * 4 + start;
         results.push(
-            <text x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">楚</text>
+            <text key={key++} x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">楚</text>
         );
 
         x1 += space;
         results.push(
-            <text x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">河</text>
+            <text key={key++} x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">河</text>
         );
 
         x1 += (space * 3);
         results.push(
-            <text x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">漢</text>
+            <text key={key++} x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">漢</text>
         );
         x1 += space;
         results.push(
-            <text x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">界</text>
+            <text key={key++} x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="start" alignmentBaseline="middle">界</text>
         );
 
         return (

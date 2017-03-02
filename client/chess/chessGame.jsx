@@ -26,6 +26,7 @@ module.exports = class ChessGame extends React.Component {
         this.handleRoleChange = this.handleRoleChange.bind(this);
         this.handleGameUpdate = this.handleGameUpdate.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleTouchTap = this.handleTouchTap.bind(this);
     }
 
     render() {
@@ -36,7 +37,7 @@ module.exports = class ChessGame extends React.Component {
         if (this.space % 2 !== 0) {
             this.space--;
         }
-        
+
         const leftPadding = Math.floor((this.props.width - this.space * 9) / 2);
         const topPadding = Math.floor((this.props.height - this.space * 10) / 2);
 
@@ -50,7 +51,7 @@ module.exports = class ChessGame extends React.Component {
 
         return (
             <div style={divStyle}>
-                <svg width={this.space*9} height={this.space*10} onClick={this.handleClick} >
+                <svg width={this.space*9} height={this.space*10} onClick={this.handleClick}>
                     <ChessBoard space={this.space} />
                     <Chess space={this.space} chess={this.state.chess} rotate={this.state.role === role.black} />
                     <ChessSelection space={this.space} select={this.state.select} runSteps={this.state.runSteps} eatSteps={this.state.eatSteps} rotate={this.state.role === role.black} />
@@ -87,12 +88,25 @@ module.exports = class ChessGame extends React.Component {
         });
     }
 
+    handleTouchTap(event) {
+        var rect = event.nativeEvent.target.getBoundingClientRect();
+        const pos = {
+            x: Math.floor((event.nativeEvent.targetTouches[0].pageX - rect.left) / this.space),
+            y: Math.floor((event.nativeEvent.targetTouches[0].pageY - rect.top) / this.space)
+        };
+        this.handleNewPosition(pos);
+    }
+
     handleClick(event) {
         const pos = {
-            x: Math.floor(event.nativeEvent.clientX / this.space),
-            y: Math.floor(event.nativeEvent.clientY / this.space)
+            x: Math.floor(event.nativeEvent.offsetX / this.space),
+            y: Math.floor(event.nativeEvent.offsetY / this.space)
         };
 
+        this.handleNewPosition(pos);
+    }
+
+    handleNewPosition(pos) {
         if (this.state.role === role.black) {
             pos.x = utils.maxX - pos.x;
             pos.y = utils.maxY - pos.y;

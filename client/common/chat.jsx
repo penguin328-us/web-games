@@ -1,6 +1,7 @@
 "use strict";
 
 const React = require("react");
+import TextField from 'material-ui/TextField';
 
 // required attrs
 // chatClient - ChatClient
@@ -8,16 +9,13 @@ const React = require("react");
 module.exports = class Chat extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            value: ""
-        };
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
     render() {
         return (
             <div>
-                <input type="text" onKeyPress={this.handleKeyPress} />
+                <TextField floatingLabelText="Press Enter to Send Message" hintText="message to be sent" type="text" onKeyPress={this.handleKeyPress} fullWidth={true} />
             </div>
         );
     }

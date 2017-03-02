@@ -7,7 +7,7 @@ module.exports = class ChatClient {
     constructor(person) {
         this.person = person;
         this.onChat = new Callback();
-        self = this;
+        const self = this;
         this.person.on(chatEvents.chat, (data) => {
             self.onChat.invoke(data.displayName, data.message);
         });

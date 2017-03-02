@@ -1,6 +1,8 @@
 "use strict";
 
 const React = require("react");
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 // required properties
 // allRoles = [{displayName:"Role1", value:"role1"}]
@@ -30,26 +32,23 @@ module.exports = class RoleSelect extends React.Component {
     }
 
     render() {
-        const options = [];
+        const items = [];
         this.props.allRoles.forEach((r) => {
-            options.push(
-                <option value={r.value} selected={r.value === this.state.currentRole} disabled={this.state.availableRoles.indexOf(r.value)<0}>{r.displayName}</option>
+            items.push(
+                <MenuItem key={r.value} value={r.value} disabled={this.state.availableRoles.indexOf(r.value)<0} primaryText={r.displayName} />
             );
         });
 
         return (
-            <form  className="pure-form pure-form-stacked">
-                <select onChange={this.handleChange} style={{width:"80%"}}>
-                    {options}
-                </select>
-            </form>
+            <SelectField floatingLabelText="Role" onChange={this.handleChange} value ={this.state.currentRole} fullWidth={true}>
+                {items}
+            </SelectField>
         );
     }
 
-    handleChange(event) {
-        const newValue = event.target.value;
-        if(newValue){
-            this.props.roleClient.changeRole(newValue);
+    handleChange(event, key, payload) {
+        if (payload) {
+            this.props.roleClient.changeRole(payload);
         }
     }
 

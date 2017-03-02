@@ -3,6 +3,7 @@
 const React = require("react");
 const gameStatus = require("../../games/common/gameStatus");
 const role = require("../../games/chinese-chess/role");
+import RaisedButton from 'material-ui/RaisedButton';
 
 // required attributes
 // roleClient
@@ -27,12 +28,12 @@ module.exports = class GameAction extends React.Component {
         if (this.state.role && this.state.role !== role.watcher) {
             if (this.state.status === gameStatus.running) {
                 return (
-                    <button onClick={this.handleSurrender} className="pure-button" style={{backgroundColor:"rgb(223, 117, 20)", color:"white"}}>Surrender</button>
+                    <RaisedButton onTouchTap={this.handleSurrender} label="Surrender" secondary={true} fullWidth={true} />
                 );
             }
             else {
                 return (
-                    <button onClick={this.handleReady} disabled={this.state.hasReady} className="pure-button pure-button-primary">Ready</button>
+                    <RaisedButton onTouchTap={this.handleReady} label="Ready" primary={true} disabled={this.state.hasReady} fullWidth={true}/>
                 );
 
             }
@@ -62,7 +63,9 @@ module.exports = class GameAction extends React.Component {
     }
 
     handleSurrender() {
-        this.props.chessClient.surrender();
+        if (confirm("Are you sure to surrender?")) {
+            this.props.chessClient.surrender();
+        }
     }
 
     handleStatusChange() {

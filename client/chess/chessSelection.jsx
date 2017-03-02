@@ -30,7 +30,7 @@ module.exports = class ChessSelection extends React.Component {
             this.props.eatSteps.forEach((step) => {
                 point = self.getCenterPoint(step, space, rotate);
                 steps.push(
-                    <circle cx={point.cx} cy={point.cy} r={radius} stroke={stroke} strokeWidth={strokeWidth} fill="none" />
+                    <circle key={step.x.toString() + step.y.toString()} cx={point.cx} cy={point.cy} r={radius} stroke={stroke} strokeWidth={strokeWidth} fill="none" />
                 );
             });
 
@@ -38,14 +38,14 @@ module.exports = class ChessSelection extends React.Component {
             this.props.runSteps.forEach((step) => {
                 point = self.getCenterPoint(step, space, rotate);
                 steps.push(
-                    <circle cx={point.cx} cy={point.cy} r={r} stroke={stroke} strokeWidth={strokeWidth} fill="stroke" />
+                    <circle key={step.x.toString() + step.y.toString()} cx={point.cx} cy={point.cy} r={r} stroke={stroke} strokeWidth={strokeWidth} fill="stroke" />
                 );
             });
 
             point = self.getCenterPoint(this.props.select, space, rotate);
             return (
                 <g>
-                    <circle cx={point.cx} cy={point.cy} r={radius} stroke={stroke} strokeWidth={strokeWidth} fill="none" />
+                    <circle key={this.props.select.x.toString() + this.props.select.y.toString()}  cx={point.cx} cy={point.cy} r={radius} stroke={stroke} strokeWidth={strokeWidth} fill="none" />
                     {steps}
                 </g>
             );
