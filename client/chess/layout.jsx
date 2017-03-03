@@ -14,14 +14,14 @@ module.exports = class Layout extends React.Component {
 
     render() {
         return (
-            <table>
+            <table style={{borderSpacing:"0px", width:"100%"}}>
                 <tbody>
                 <tr>
-                    <td>
+                    <td style={{padding:"0px"}}>
                         <ChessGame width={this.state.gameWidth} height={this.state.gameHeight} client={this.props.client} />
                     </td>
-                    <td style={{width:this.state.margin}} />
-                    <td>
+                    <td style={{width:this.state.margin, padding:"0px"}} />
+                    <td style={{padding:"0px"}}>
                         <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} />
                     </td>
                 </tr>
@@ -31,8 +31,8 @@ module.exports = class Layout extends React.Component {
     }
 
     getSizeState() {
-        const clientWidth = window.innerWidth - 20;
-        const clientHeight = window.innerHeight - 20;
+        const clientWidth = window.innerWidth;
+        const clientHeight = window.innerHeight;
         if (clientWidth > 800) {
             const gameWidth = Math.min(Math.round(clientHeight / 10 * 9), clientWidth - 200);
             return {

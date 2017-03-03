@@ -17,6 +17,7 @@ module.exports = class ChessGame extends React.Component {
         this.state = {
             role: client.roleClient.currentRole,
             chess: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
+            lastStep: undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
             select: undefined,
             runSteps: [],
@@ -46,14 +47,22 @@ module.exports = class ChessGame extends React.Component {
             height: this.props.height,
             paddingTop: topPadding,
             paddingLeft: leftPadding,
-            backgroundColor: "#966F33"
+            backgroundColor: "#966F33",
+            boxSizing: "border-box"
         };
 
         return (
             <div style={divStyle}>
-                <svg width={this.space*9} height={this.space*10} onClick={this.handleClick}>
+                <svg width={this.space*9} height={this.space*10} onTouchTap={this.handleTouchTap} ref={(svg)=>{this.svg = svg}}>
+                    <defs>
+                        <filter id="shadow" x="-20%" y="-20%" width="200%" height="200%">
+                          <feOffset result="offOut" in="SourceAlpha" dx="4" dy="4" />
+                          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="2" />
+                          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                        </filter>
+                    </defs>
                     <ChessBoard space={this.space} />
-                    <Chess space={this.space} chess={this.state.chess} rotate={this.state.role === role.black} />
+                    <Chess space={this.space} chess={this.state.chess} rotate={this.state.role === role.black} lastStep={this.state.lastStep} />
                     <ChessSelection space={this.space} select={this.state.select} runSteps={this.state.runSteps} eatSteps={this.state.eatSteps} rotate={this.state.role === role.black} />
                 </svg>
             </div>
@@ -81,6 +90,7 @@ module.exports = class ChessGame extends React.Component {
     handleGameUpdate(gameState) {
         this.setState({
             chess: new TwoDArray(gameState.board.x, gameState.board.y, gameState.board.array),
+            lastStep: gameState.lastStep,
             turn: gameState.turn,
             select: undefined,
             runSteps: [],
@@ -89,11 +99,20 @@ module.exports = class ChessGame extends React.Component {
     }
 
     handleTouchTap(event) {
-        var rect = event.nativeEvent.target.getBoundingClientRect();
-        const pos = {
-            x: Math.floor((event.nativeEvent.targetTouches[0].pageX - rect.left) / this.space),
-            y: Math.floor((event.nativeEvent.targetTouches[0].pageY - rect.top) / this.space)
-        };
+        let pos = undefined;
+        var rect = this.svg.getBoundingClientRect();
+        if (event.nativeEvent.changedTouches && event.nativeEvent.changedTouches.length > 0) {
+            pos = {
+                x: Math.floor((event.nativeEvent.changedTouches[0].pageX - rect.left) / this.space),
+                y: Math.floor((event.nativeEvent.changedTouches[0].pageY - rect.top) / this.space)
+            };
+        }
+        else if (event.nativeEvent.pageX !== undefined) {
+            pos = {
+                x: Math.floor((event.nativeEvent.pageX - rect.left) / this.space),
+                y: Math.floor((event.nativeEvent.pageY - rect.top) / this.space)
+            };
+        }
         this.handleNewPosition(pos);
     }
 
@@ -107,6 +126,9 @@ module.exports = class ChessGame extends React.Component {
     }
 
     handleNewPosition(pos) {
+        if (!pos) {
+            return;
+        }
         if (this.state.role === role.black) {
             pos.x = utils.maxX - pos.x;
             pos.y = utils.maxY - pos.y;

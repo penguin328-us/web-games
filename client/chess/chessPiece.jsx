@@ -73,7 +73,8 @@ module.exports = class ChessPiece extends React.Component {
         const margin = Math.round(space * 0.05);
         const radius = Math.round(space / 2 - margin);
 
-        const stroke = (r === role.black ? "black" : "red");
+        const stroke = (r === role.black ? "black" : "#F44336");
+        const fill = (r === role.black ? "black" : "#EF5350");
         const strokeWidth = space <= 50 ? 1 : 2;
 
         const x1 = space * x + space / 2;
@@ -93,10 +94,9 @@ module.exports = class ChessPiece extends React.Component {
 
 
         return (
-            <g>
-                <circle cx={x1} cy={y1} r={radius} stroke="black" strokeWidth={strokeWidth} fill="#966F33" />
-                <circle cx={x1} cy={y1} r={radius-Math.min(margin,5)} stroke={stroke} strokeWidth={strokeWidth+1} fill="#ffffcc" />
-                <text x={x1} y={y1+margin} stroke={stroke} style={textStyle} textAnchor="middle" alignmentBaseline="middle">{text}</text>
+            <g style={{cursor:"pointer"}}>
+                <circle cx={x1} cy={y1} r={radius-Math.min(margin,5)} stroke="black" strokeWidth={strokeWidth+1} fill="url(#chessPiece)" filter="url(#shadow)" />
+                <text x={x1} y={y1+margin} stroke={stroke} style={textStyle} textAnchor="middle" alignmentBaseline="middle" fill={fill}>{text}</text>
             </g>
         );
     }

@@ -17,13 +17,29 @@ module.exports = class GameClientBase {
             this.roleClient = new RoleClient(this.person);
             this.roomClient = new RoomClient(this.person);
 
-            if(connectedCallback){
+            if (connectedCallback) {
                 connectedCallback(this);
             }
         }).bind(this));
     }
 
     getRoomNumber() {
-        return "12345";
+        const number = this.getParameterByName("room");
+        if(!number){
+            window.location.href="/index.html"
+        }
+        return number;
+    }
+
+    getParameterByName(name, url) {
+        if (!url) {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 };

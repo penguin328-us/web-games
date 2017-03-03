@@ -66,7 +66,7 @@ module.exports = class RightPanel extends React.Component {
                 <div style={{
                     display:this.state.openDrawer?"none":"block",
                     position:"fixed",
-                    right:"15px",
+                    right:"0px",
                     top:"15px",
                     backgroundColor:"white",
                     opacity:"0.3"
