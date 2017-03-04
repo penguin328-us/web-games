@@ -1,12 +1,15 @@
 "use strict";
 
 const React = require("react");
+const ReactDom = require("react-dom");
 const RoleSelect = require("../common/roleSelect.jsx");
 const GameAction = require("./gameAction.jsx");
-const MessageBox = require("../common/messageBox.jsx");
 const Chat = require("../common/chat.jsx");
+const PopMessage = require("../common/popMessage.jsx");
 
 const role = require("../../games/chinese-chess/role");
+const CallbackManager = require("../../common/callbackManager");
+const gameStatus = require("../../games/common/gameStatus");
 
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
@@ -35,9 +38,13 @@ module.exports = class RightPanel extends React.Component {
 
     constructor(props) {
         super(props);
+        this.callbackManager = new CallbackManager();
         this.state = {
-            openDrawer: false
+            openDrawer: this.props.client.chessClient.latestState !== gameStatus.running,
+            messages: [],
+            popMessages: []
         };
+        this.messageKey = 1;
         this.handleDrawerClose = this.handleDrawerClose.bind(this);
         this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
     }
@@ -52,14 +59,27 @@ module.exports = class RightPanel extends React.Component {
                  <div style={{height:50}}>
                     <GameAction roleClient={this.props.client.roleClient} chessClient={this.props.client.chessClient} />
                 </div>
-                <div  style={{height:Math.max(150,height-210)}}>
-                    <MessageBox ref={(mb)=>{this.messageBox = mb}} />
+                <div style={{height:Math.max(150,height-220),border:"1px gray solid", borderRadius:"3px", padding:5, overflowX:"hidden", overflowY:"auto"}}>
+                    {this.state.messages}
+                    <div ref={(el)=>{this.messagesEnd = el}}></div>
                 </div>
                 <div style={{height:80}}>
                     <Chat chatClient={this.props.client.chatClient} />
                 </div>
             </div>
         );
+
+        const popMessage = (
+            <div style={{
+                display:this.state.openDrawer?"none":"block",
+                position:"fixed",
+                right:"0px",
+                top:"65px",
+                width:this.props.width,
+                overflow:"hidden"
+            }}>
+                {this.state.popMessages}
+            </div>);
 
         return this.props.hide ? (
             <div>
@@ -79,6 +99,7 @@ module.exports = class RightPanel extends React.Component {
                     {children}
                     </div>
                 </Drawer>
+                {popMessage}
             </div>
         ) : (
             <div style={{width:this.props.width, height:this.props.height, overflowY:"auto", overflowX:"hidden"}}>
@@ -95,56 +116,130 @@ module.exports = class RightPanel extends React.Component {
 
     handleDrawerOpen() {
         this.setState({
-            openDrawer: true
+            openDrawer: true,
+            popMessages: []
         });
     }
 
+    addMessage(message) {
+        this.setState({
+            messages: this.state.messages.concat([message])
+        });
+
+        if (this.props.hide && !this.state.openDrawer) {
+            const pop = (
+                <PopMessage key={this.messageKey++}>
+                    {message}
+                </PopMessage>
+            );
+
+            this.setState({
+                popMessages: this.state.popMessages.concat([pop])
+            });
+
+            setTimeout((() => {
+                const index = this.state.popMessages.indexOf(pop);
+                if (index >= 0) {
+                    this.setState({
+                        popMessages: this.state.popMessages.filter((_, i) => i !== index)
+                    });
+                }
+            }).bind(this), 10000);
+        }
+    }
+
     componentDidMount() {
-        this.roleChangeMessage = ((data) => {
-            if (data.displayName && data.role) {
-                this.messageBox.addMessage(`${data.displayName} changed to role ${data.role}`);
-            }
-        }).bind(this);
-        this.props.client.roleClient.onRoleChangeMessage.add(this.roleChangeMessage);
+        const success = {
+            color: "#4CAF50"
+        };
+        const warning = {
+            color: "#F57F17"
+        };
+        const chat = {
+            color: "#757575"
+        };
 
-        this.joinRoomMessage = ((displayName) => {
-            this.messageBox.addMessage(`${displayName} entered room`);
-        }).bind(this);
-        this.props.client.roomClient.onJoinRoomMessage.add(this.joinRoomMessage);
+        this.callbackManager.register(this.props.client.roleClient.onRoleChangeMessage,
+            ((data) => {
+                if (data.displayName && data.role) {
+                    this.addMessage(
+                        <div key={this.messageKey++} style={success}>
+                            <b>{data.displayName}</b> changed to role <b>{data.role}</b>
+                        </div>
+                    );
+                }
+            }).bind(this));
 
-        this.leaveRoomMessage = ((displayName) => {
-            this.messageBox.addMessage(`${displayName} left room`);
-        }).bind(this);
-        this.props.client.roomClient.onLeaveRoomMessage.add(this.leaveRoomMessage);
+        this.callbackManager.register(this.props.client.roomClient.onJoinRoomMessage,
+            ((displayName) => {
+                this.addMessage(
+                    <div key={this.messageKey++} style={success}>
+                            <b>{displayName}</b> entered room
+                        </div>
+                );
+            }).bind(this));
 
-        this.chatMessage = ((displayName, message) => {
-            this.messageBox.addMessage(`${displayName} : ${message}`);
-        }).bind(this);
-        this.props.client.chatClient.onChat.add(this.chatMessage);
+        this.callbackManager.register(this.props.client.roomClient.onLeaveRoomMessage,
+            ((displayName) => {
+                this.addMessage(
+                    <div key={this.messageKey++} style={warning}>
+                            <b>{displayName}</b> left room
+                        </div>
+                );
+            }).bind(this));
 
-        this.gameReadyMessage = ((displayName, role) => {
-            this.messageBox.addMessage(`${displayName}(${role}) is ready`);
-        }).bind(this);
-        this.props.client.chessClient.onReadyMessage.add(this.gameReadyMessage);
+        this.callbackManager.register(this.props.client.chatClient.onChat,
+            ((displayName, message) => {
+                this.addMessage(
+                    <div key={this.messageKey++} style={chat}>
+                            <b>{displayName}</b>: {message}
+                        </div>
+                );
+            }).bind(this));
 
-        this.gameStartedMessage = (() => {
-            this.messageBox.addMessage("Game started");
-        }).bind(this);
-        this.props.client.chessClient.onGameStarted.add(this.gameStartedMessage);
+        this.callbackManager.register(this.props.client.chessClient.onReadyMessage,
+            ((displayName, role) => {
+                this.addMessage(
+                    <div key={this.messageKey++} style={success}>
+                            <b>{displayName}</b>(<b>{role}</b>) is ready
+                        </div>
+                );
+            }).bind(this));
 
-        this.gameCompletedMessage = ((data) => {
-            this.messageBox.addMessage(`${data.displayName}(${data.role}) wins game`);
-        }).bind(this);
-        this.props.client.chessClient.onGameCompleted.add(this.gameCompletedMessage);
+        this.callbackManager.register(this.props.client.chessClient.onGameStarted,
+            (() => {
+                if (this.props.hide) {
+                    this.handleDrawerClose();
+                }
+                this.addMessage(
+                    <div key={this.messageKey++} style={success}>
+                           Game started
+                    </div>
+                );
+            }).bind(this));
+
+        this.callbackManager.register(this.props.client.chessClient.onGameCompleted,
+            ((data) => {
+                this.addMessage(
+                    <div key={this.messageKey++} style={success}>
+                        <b>{data.displayName}</b>(<b>{data.role}</b>) wins game
+                    </div>
+                );
+            }).bind(this));
     }
 
     componentWillUnmount() {
-        this.props.client.roleClient.onRoleChangeMessage.remove(this.roleChangeMessage);
-        this.props.client.roomClient.onJoinRoomMessage.remove(this.joinRoomMessage);
-        this.props.client.roomClient.onLeaveRoomMessage.remove(this.leaveRoomMessage);
-        this.props.client.chatClient.onChat.remove(this.chatMessage);
-        this.props.client.chessClient.onReadyMessage.remove(this.gameReadyMessage);
-        this.props.client.chessClient.onGameStarted.remove(this.gameStartedMessage);
-        this.props.client.chessClient.onGameCompleted.remove(this.gameCompletedMessage);
+        this.callbackManager.unRegisterAll();
+    }
+
+    componentDidUpdate() {
+        this.scrollToMessageBottom();
+    }
+
+    scrollToMessageBottom() {
+        const node = ReactDom.findDOMNode(this.messagesEnd);
+        node.scrollIntoView({
+            behavior: "smooth"
+        });
     }
 };

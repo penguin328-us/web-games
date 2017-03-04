@@ -26,7 +26,7 @@ module.exports = class GameClientBase {
     getRoomNumber() {
         const number = this.getParameterByName("room");
         if(!number){
-            window.location.href="/index.html"
+            window.location.href="/index.html";
         }
         return number;
     }

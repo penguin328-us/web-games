@@ -1,0 +1,29 @@
+.popup{
+    background-color: white;
+    margin:10px;
+    border-radius: 3px;
+    position: relative
+}
+
+.popup .arrow:after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent white;
+}
+
+.popup .close{
+    position: absolute;
+    top:8px;
+    right:8px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.popup .close:hover{
+    background-color: #757575
+}
