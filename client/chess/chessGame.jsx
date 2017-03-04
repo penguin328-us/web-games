@@ -103,14 +103,14 @@ module.exports = class ChessGame extends React.Component {
         var rect = this.svg.getBoundingClientRect();
         if (event.nativeEvent.changedTouches && event.nativeEvent.changedTouches.length > 0) {
             pos = {
-                x: Math.floor((event.nativeEvent.changedTouches[0].pageX - rect.left) / this.space),
-                y: Math.floor((event.nativeEvent.changedTouches[0].pageY - rect.top) / this.space)
+                x: Math.floor((event.nativeEvent.changedTouches[0].clientX - rect.left) / this.space),
+                y: Math.floor((event.nativeEvent.changedTouches[0].clientY - rect.top) / this.space)
             };
         }
-        else if (event.nativeEvent.pageX !== undefined) {
+        else if (event.nativeEvent.clientX !== undefined) {
             pos = {
-                x: Math.floor((event.nativeEvent.pageX - rect.left) / this.space),
-                y: Math.floor((event.nativeEvent.pageY - rect.top) / this.space)
+                x: Math.floor((event.nativeEvent.clientX - rect.left) / this.space),
+                y: Math.floor((event.nativeEvent.clientY - rect.top) / this.space)
             };
         }
         this.handleNewPosition(pos);

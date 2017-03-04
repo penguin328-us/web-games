@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <title>Web Games</title>
+</head>
+
+<body>
+    <div>
+        <div>window.innerWidth = <span id="innerWidth"></span></div>
+        <div>screenWidth = <span id="screenWidth"></span> </div>
+    </div>
+    
+    <button click="showWidth()">Show Result</button>
+    
+    <script type="text/javascript" >
+        function showWidth(){
+            $("#innerWidth").text(window.innerWidth + " X " + window.innerHeight);
+            $("#screenWidth").text(window.screen.width + " X " + window.screen.height);
+        }
+        
+        window.addEventListener("resize",()=>{showWidth();});
+        showWidth();
+        
+    </script>
+</body>
+
+</html>

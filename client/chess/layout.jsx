@@ -14,7 +14,7 @@ module.exports = class Layout extends React.Component {
 
     render() {
         return (
-            <table style={{borderSpacing:"0px", width:"100%"}}>
+            <table style={{borderSpacing:"0px"}}>
                 <tbody>
                 <tr>
                     <td style={{padding:"0px"}}>
@@ -31,17 +31,19 @@ module.exports = class Layout extends React.Component {
     }
 
     getSizeState() {
-        const clientWidth = window.innerWidth;
-        const clientHeight = window.innerHeight;
-        if (clientWidth > 800) {
+        const scale = window.screen.width / window.innerWidth;
+        const clientWidth = window.innerWidth * scale;
+        const clientHeight = window.innerHeight * scale;
+        if (window.screen.width > 800) {
             const gameWidth = Math.min(Math.round(clientHeight / 10 * 9), clientWidth - 200);
+            const margin = Math.max(10*scale,10);
             return {
                 gameWidth: gameWidth,
                 gameHeight: clientHeight,
-                panelWdith: Math.min(clientWidth - gameWidth - 10, gameWidth - 100),
+                panelWdith: Math.min(clientWidth - gameWidth - margin, gameWidth - 100),
                 panelHeight: clientHeight,
                 panelHidden: false,
-                margin: 10
+                margin: margin
             };
         }
         else {
