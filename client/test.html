@@ -13,14 +13,18 @@
     <div>
         <div>window.innerWidth = <span id="innerWidth"></span></div>
         <div>screenWidth = <span id="screenWidth"></span> </div>
+        <div>window.devicePixelRatio = <span id="devicePixelRatio"></span></div>
     </div>
     
     <button click="showWidth()">Show Result</button>
     
     <script type="text/javascript" >
+    /*global $ */
+    
         function showWidth(){
             $("#innerWidth").text(window.innerWidth + " X " + window.innerHeight);
             $("#screenWidth").text(window.screen.width + " X " + window.screen.height);
+            $("#devicePixelRatio").text(window.devicePixelRatio);
         }
         
         window.addEventListener("resize",()=>{showWidth();});

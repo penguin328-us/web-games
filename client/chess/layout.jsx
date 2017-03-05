@@ -31,16 +31,15 @@ module.exports = class Layout extends React.Component {
     }
 
     getSizeState() {
-        const scale = window.screen.width / window.innerWidth;
-        const clientWidth = window.innerWidth * scale;
-        const clientHeight = window.innerHeight * scale;
-        if (window.screen.width > 800) {
+        const clientWidth = window.innerWidth;
+        const clientHeight = window.innerHeight;
+        if (window.innerWidth > 800) {
             const gameWidth = Math.min(Math.round(clientHeight / 10 * 9), clientWidth - 200);
-            const margin = Math.max(10*scale,10);
+            const margin = 10;
             return {
                 gameWidth: gameWidth,
                 gameHeight: clientHeight,
-                panelWdith: Math.min(clientWidth - gameWidth - margin, gameWidth - 100),
+                panelWdith: clientWidth - gameWidth - margin * 2,
                 panelHeight: clientHeight,
                 panelHidden: false,
                 margin: margin
@@ -59,7 +58,9 @@ module.exports = class Layout extends React.Component {
     }
 
     resizeHandler() {
-        this.setState(this.getSizeState());
+        if (window.innerWidth > 800 || !this.state.panelHidden) {
+            this.setState(this.getSizeState());
+        }
     }
 
     componentDidMount() {
