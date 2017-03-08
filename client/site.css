@@ -1,11 +1,32 @@
-.popup{
+html {
+    margin: 0px;
+    width: 100%;
+    height: 100%
+}
+
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+table {
+    border-spacing: 0px;
+}
+
+td {
+    padding: 0px;
+}
+
+.popup {
     background-color: white;
-    margin:10px;
+    margin: 10px;
     border-radius: 3px;
     position: relative
 }
 
-.popup .arrow:after{
+.popup .arrow:after {
     content: "";
     position: absolute;
     top: 50%;
@@ -16,14 +37,14 @@
     border-color: transparent transparent transparent white;
 }
 
-.popup .close{
+.popup .close {
     position: absolute;
-    top:8px;
-    right:8px;
+    top: 8px;
+    right: 8px;
     background-color: white;
     cursor: pointer;
 }
 
-.popup .close:hover{
+.popup .close:hover {
     background-color: #757575
 }
