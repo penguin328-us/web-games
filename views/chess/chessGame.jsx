@@ -53,7 +53,7 @@ module.exports = class ChessGame extends React.Component {
 
         return (
             <div style={divStyle}>
-                <svg width={this.space*9} height={this.space*10} onTouchTap={this.handleTouchTap} ref={(svg)=>{this.svg = svg}}>
+                <svg width={this.space*9} height={this.space*10} onTouchTap={this.handleTouchTap} ref={(svg)=>{this.svg = svg}} style={{overflow:"hidden"}}>
                     <defs>
                         <filter id="shadow" x="-20%" y="-20%" width="200%" height="200%">
                           <feOffset result="offOut" in="SourceAlpha" dx="4" dy="4" />

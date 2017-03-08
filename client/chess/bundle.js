@@ -48399,7 +48399,7 @@ module.exports = function (_React$Component) {
                     "svg",
                     { width: this.space * 9, height: this.space * 10, onTouchTap: this.handleTouchTap, ref: function ref(svg) {
                             _this2.svg = svg;
-                        } },
+                        }, style: { overflow: "hidden" } },
                     React.createElement(
                         "defs",
                         null,
@@ -48688,7 +48688,7 @@ module.exports = function (_React$Component) {
                 React.createElement("circle", { cx: x1, cy: y1, r: radius - Math.min(margin, 5), stroke: "black", strokeWidth: strokeWidth + 1, fill: "url(#chessPiece)", filter: "url(#shadow)" }),
                 React.createElement(
                     "text",
-                    { x: x1, y: y1 + margin, stroke: stroke, style: textStyle, textAnchor: "middle", alignmentBaseline: "middle", fill: fill },
+                    { x: x1, y: y1, stroke: stroke, style: textStyle, textAnchor: "middle", dy: "0.5ex", fill: fill },
                     text
                 )
             );
@@ -49131,7 +49131,7 @@ module.exports = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var height = this.props.hide ? this.props.height - 65 : this.props.height - 10;
+            var height = this.props.hide ? this.props.height - 75 : this.props.height - 10;
             var children = React.createElement(
                 "div",
                 null,
@@ -49151,7 +49151,7 @@ module.exports = function (_React$Component) {
                     this.state.messages,
                     React.createElement("div", { ref: function ref(el) {
                             _this2.messagesEnd = el;
-                        } })
+                        }, style: { height: 5 } })
                 ),
                 React.createElement(
                     "div",

@@ -23,7 +23,9 @@ td {
     background-color: white;
     margin: 10px;
     border-radius: 3px;
-    position: relative
+    position: relative;
+    box-shadow: 3px 3px 2px;
+    border:1px solid gray;
 }
 
 .popup .arrow:after {

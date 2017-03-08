@@ -96,7 +96,7 @@ module.exports = class ChessPiece extends React.Component {
         return (
             <g style={{cursor:"pointer"}}>
                 <circle cx={x1} cy={y1} r={radius-Math.min(margin,5)} stroke="black" strokeWidth={strokeWidth+1} fill="url(#chessPiece)" filter="url(#shadow)" />
-                <text x={x1} y={y1+margin} stroke={stroke} style={textStyle} textAnchor="middle" alignmentBaseline="middle" fill={fill}>{text}</text>
+                <text x={x1} y={y1} stroke={stroke} style={textStyle} textAnchor="middle" dy="0.5ex" fill={fill}>{text}</text>
             </g>
         );
     }
