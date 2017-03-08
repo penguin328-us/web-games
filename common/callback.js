@@ -16,4 +16,13 @@ module.exports = class Callback {
             this.callback.push(cb);
         }
     }
+
+    remove(cb) {
+        if (cb) {
+            const index = this.callback.indexOf(cb);
+            if (index >= 0) {
+                this.callback.splice(index, 1);
+            }
+        }
+    }
 };

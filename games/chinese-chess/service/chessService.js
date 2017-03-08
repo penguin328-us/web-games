@@ -25,26 +25,26 @@ module.exports = class ChessService extends GameServiceBase {
         this.lastStep = undefined;
 
         const self = this;
-        this.rolesReadyWaiter.onReady(() => {
+        this.rolesReadyWaiter.onReady.add(() => {
             self.gameStatus = gameStatus.running;
             self.lastStep = undefined;
             self.chess.reset();
             self.setGameStarted(self.getGameState());
         });
-        this.room.onEnterRoom((person) => {
+        this.room.onEnterRoom.add((person) => {
             if (self.gameStatus === gameStatus.running) {
                 self.setGameStarted(self.getGameState(), person);
             }
         });
         this.room.on(chessEvents.takeStep, (r, p, step) => {
-            if (this.roleService.getPerson(self.chess.turn) === p) {
+            if (this.roleService.getPerson(self.chess.turn) === p && this.gameStatus === gameStatus.running) {
                 if (self.chess.takeStep(step.from, step.to)) {
                     self.lastStep = step;
                     self.updateGameState(self.getGameState());
                 }
             }
         });
-        this.room.on(chessEvents.surrend, (r, p, data) => {
+        this.room.on(chessEvents.surrender, (r, p, data) => {
             const rl = self.roleService.getRole(p);
             if (rl === role.black) {
                 self.markGameComplete(role.red);
@@ -59,7 +59,7 @@ module.exports = class ChessService extends GameServiceBase {
     }
 
     markGameComplete(winRole) {
-        const person = self.roleService.getPerson(winRole);
+        const person = this.roleService.getPerson(winRole);
         this.gameStatus = gameStatus.completed;
         this.rolesReadyWaiter.reset();
         this.setGameCompleted({

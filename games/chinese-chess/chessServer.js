@@ -8,10 +8,10 @@ const nameSpace = "/chess";
 
 module.exports.start = function(io) {
     const roomService = new RoomService(io, nameSpace);
-    roomService.onRoomCreate((room) => {
+    roomService.onRoomCreated.add((room) => {
         let chatService = new ChatService(room);
         let chessService = new ChessService(room);
-        room.onEmpty(() => {
+        room.onEmpty.add(() => {
             chatService = undefined;
             chessService = undefined;
         });

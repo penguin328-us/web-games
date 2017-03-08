@@ -14,4 +14,8 @@ module.exports = class ChessClient extends GameClientBase {
             to: to
         });
     }
+    
+    surrender(){
+        this.person.emit(chessEvents.surrender);
+    }
 };

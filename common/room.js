@@ -6,15 +6,15 @@ module.exports = class Room {
     constructor() {
         this.personList = [];
         this.events = {};
-        this.onEmptyCallback = new Callback();
-        this.onEnterRoomCallback = new Callback();
-        this.onLeftRoomCallback = new Callback();
+        this.onEmpty = new Callback();
+        this.onEnterRoom = new Callback();
+        this.onLeftRoom = new Callback();
     }
 
     addPerson(person) {
         this.personList.push(person);
         var self = this;
-        person.onDisconnect(() => {
+        person.onDisconnect.add(() => {
             self.removePerson(person);
         });
         Object.keys(this.events).forEach((event) => {
@@ -24,10 +24,7 @@ module.exports = class Room {
                 }
             });
         });
-        this.onEnterRoomCallback.invoke(person);
-    }
-    onEnterRoom(cb) {
-        this.onEnterRoomCallback.add(cb);
+        this.onEnterRoom.invoke(person);
     }
 
     removePerson(person) {
@@ -35,14 +32,10 @@ module.exports = class Room {
         if (index >= 0) {
             this.personList.splice(index, 1);
             if (this.personList.length === 0) {
-                this.onEmptyCallback.invoke();
+                this.onEmpty.invoke();
             }
         }
-        this.onLeftRoomCallback.invoke(person);
-    }
-
-    onLeftRoom(cb) {
-        this.onLeftRoomCallback.add(cb);
+        this.onLeftRoom.invoke(person);
     }
 
     broadcast(event, data) {
@@ -59,9 +52,5 @@ module.exports = class Room {
                 }
             });
         });
-    }
-
-    onEmpty(cb) {
-        this.onEmptyCallback.add(cb);
     }
 };

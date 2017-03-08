@@ -2,5 +2,5 @@
 
 module.exports = {
     takeStep: "take step",
-    surrend: "surrend",
+    surrender: "surrender",
 };

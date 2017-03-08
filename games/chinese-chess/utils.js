@@ -5,6 +5,9 @@ const pieceType = require("./pieceType");
 const maxX = 8;
 const maxY = 9;
 
+module.exports.maxX = maxX;
+module.exports.maxY = maxY;
+
 module.exports.getAvailableSteps = function(chessBoard, pos) {
     const piece = chessBoard.get(pos.x, pos.y);
     const runSteps = [];
@@ -53,13 +56,20 @@ module.exports.isPosInArray = function(pos, arr) {
     return false;
 };
 
-const lineDirs = [
-        { x: -1, y: 0 },
-        { x: 1, y: 0 },
-        { x: 0, y: -1 },
-        { x: 0, y: 1 }
-    ];
-    
+const lineDirs = [{
+    x: -1,
+    y: 0
+}, {
+    x: 1,
+    y: 0
+}, {
+    x: 0,
+    y: -1
+}, {
+    x: 0,
+    y: 1
+}];
+
 
 const boardRange = {
     minX: 0,
@@ -72,7 +82,7 @@ function isPosInBoard(pos, range) {
     if (!range) {
         range = boardRange;
     }
-    return pos.x >= range.minX && pos.x <= range.maxX && pos.y >= range.minY && pos.y < range.maxY;
+    return pos.x >= range.minX && pos.x <= range.maxX && pos.y >= range.minY && pos.y <= range.maxY;
 }
 
 function addPosition(pos1, pos2) {
@@ -88,7 +98,7 @@ function getRookAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
         while (isPosInBoard(step)) {
             const p = chessBoard.get(step.x, step.y);
             if (p) {
-                if(p.role != piece.role){
+                if (p.role != piece.role) {
                     eatSteps.push(step);
                 }
                 break;
@@ -101,17 +111,32 @@ function getRookAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     });
 }
 
-const horseDirs = [
-        { x: -2, y: 1 },
-        { x: -2, y: -1 },
-        { x: 2, y: 1 },
-        { x: 2, y: -1 },
-        { x: 1, y: 2 },
-        { x: 1, y: -2 },
-        { x: -1, y: 2 },
-        { x: -1, y: -2 }
-    ];
-    
+const horseDirs = [{
+    x: -2,
+    y: 1
+}, {
+    x: -2,
+    y: -1
+}, {
+    x: 2,
+    y: 1
+}, {
+    x: 2,
+    y: -1
+}, {
+    x: 1,
+    y: 2
+}, {
+    x: 1,
+    y: -2
+}, {
+    x: -1,
+    y: 2
+}, {
+    x: -1,
+    y: -2
+}];
+
 function getHorseAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     horseDirs.forEach((dir) => {
         let step = addPosition(pos, dir);
@@ -140,31 +165,45 @@ function getHorseAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     });
 }
 
-const bishopDirs=[
-        { x: -2, y: 2 },
-        { x: -2, y: -2 },
-        { x: 2, y: 2 },
-        { x: 2, y: -2 },
-    ];
+const bishopDirs = [{
+    x: -2,
+    y: 2
+}, {
+    x: -2,
+    y: -2
+}, {
+    x: 2,
+    y: 2
+}, {
+    x: 2,
+    y: -2
+}, ];
 
-const halfRange= {
-        minX: 0,
-        maxX: maxX,
-        minY: 0,
-        maxY: 4
-    };
+const halfRange = {
+    minX: 0,
+    maxX: maxX,
+    minY: 0,
+    maxY: 4
+};
 
 function getBishopAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, bishopDirs, halfRange);
 }
 
-const guardDirs=[
-        { x: -1, y: -1 },
-        { x: -1, y: 1 },
-        { x: 1, y: -1 },
-        { x: 1, y: 1 },
-    ];
-  
+const guardDirs = [{
+    x: -1,
+    y: -1
+}, {
+    x: -1,
+    y: 1
+}, {
+    x: 1,
+    y: -1
+}, {
+    x: 1,
+    y: 1
+}, ];
+
 const kingRange = {
     minX: 3,
     maxX: 5,
@@ -181,16 +220,17 @@ function getKingAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 }
 
 function getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, dirs, range) {
-    if (piece.role === role.black && range) {
+    if (piece.role === role.red && range) {
+        range = JSON.parse(JSON.stringify(range));
         const minY = maxY - range.maxY;
         range.maxY = maxY - range.minY;
         range.minY = minY;
     }
-    
+
     dirs.forEach((dir) => {
         const step = addPosition(pos, dir);
         if (isPosInBoard(step, range)) {
-            var p = chessBoard.get(step.x, step.y);
+            let p = chessBoard.get(step.x, step.y);
             if (!p) {
                 runSteps.push(step);
             }
@@ -204,7 +244,7 @@ function getDirSteps(chessBoard, pos, piece, runSteps, eatSteps, dirs, range) {
 function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     lineDirs.forEach((dir) => {
         let eat = false;
-        var step = addPosition(pos, dir);
+        let step = addPosition(pos, dir);
         while (isPosInBoard(step)) {
             const p = chessBoard.get(step.x, step.y);
             if (p) {
@@ -222,8 +262,8 @@ function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
                 if (!eat) {
                     runSteps.push(step);
                 }
-                step = addPosition(step, dir);
             }
+            step = addPosition(step, dir);
         }
     });
 }
@@ -231,10 +271,10 @@ function getCannonAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
 function getPawnAvailableSteps(chessBoard, pos, piece, runSteps, eatSteps) {
     const dirs = [{
         x: 0,
-        y: piece.role === role.black ? -1 : 1
+        y: piece.role === role.red ? -1 : 1
     }];
-    if ((piece.role === role.red && pos.y > 4) ||
-        (piece.role === role.black && pos.y < 5)) {
+    if ((piece.role === role.black && pos.y > 4) ||
+        (piece.role === role.red && pos.y < 5)) {
         dirs.push({
             x: -1,
             y: 0
