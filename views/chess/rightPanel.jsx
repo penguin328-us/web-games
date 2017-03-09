@@ -50,7 +50,7 @@ module.exports = class RightPanel extends React.Component {
     }
 
     render() {
-        const height = this.props.hide ? this.props.height - 65 : this.props.height - 10;
+        const height = this.props.hide ? this.props.height - 75 : this.props.height - 10;
         const children = (
             <div>
                 <div style={{height:80}}>
@@ -61,7 +61,7 @@ module.exports = class RightPanel extends React.Component {
                 </div>
                 <div style={{height:Math.max(150,height-220),border:"1px gray solid", borderRadius:"3px", padding:5, overflowX:"hidden", overflowY:"auto"}}>
                     {this.state.messages}
-                    <div ref={(el)=>{this.messagesEnd = el}}></div>
+                    <div ref={(el)=>{this.messagesEnd = el}} style={{height:5}}></div>
                 </div>
                 <div style={{height:80}}>
                     <Chat chatClient={this.props.client.chatClient} />
@@ -128,7 +128,7 @@ module.exports = class RightPanel extends React.Component {
 
         if (this.props.hide && !this.state.openDrawer) {
             const pop = (
-                <PopMessage key={this.messageKey++}>
+                <PopMessage key={this.messageKey++} placement="left">
                     {message}
                 </PopMessage>
             );

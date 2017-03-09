@@ -8,7 +8,7 @@ const gulpFn = require("gulp-fn");
 const path = require("path");
 const uglify = require("gulp-uglify");
 
-const src = "view";
+const src = "views";
 const dest = "client";
 
 const scriptSrcOptions = {
@@ -29,34 +29,34 @@ function scriptBrowserify() {
 }
 
 gulp.task("browserify", function() {
-    return gulp.src("view/**/main.jsx", scriptSrcOptions)
+    return gulp.src("views/**/main.jsx", scriptSrcOptions)
         .pipe(scriptBrowserify());
 });
 
 gulp.task("html", function() {
-    return gulp.src("view/**/*.html")
+    return gulp.src("views/**/*.html")
         .pipe(gulp.dest(dest));
 });
 
 gulp.task("css", function() {
-    return gulp.src("view/**/*.css")
+    return gulp.src("views/**/*.css")
         .pipe(gulp.dest(dest));
 });
 
 gulp.task("watchhtml", function() {
-    return watch("view/**/*.html", ["html"]);
+    return watch("views/**/*.html", ["html"]);
 });
 
 gulp.task("watchcss", function() {
-    return watch("view/**/*.css", ["css"]);
+    return watch("views/**/*.css", ["css"]);
 });
 
 gulp.task("watchcommon", function() {
-    return watch("view/common/*.jsx", scriptSrcOptions, ["browserify"]);
+    return watch("views/common/*.jsx", scriptSrcOptions, ["browserify"]);
 });
 
 gulp.task("watchgamefiles", function() {
-    return watch("view/!(common)/*.{jsx,js}", scriptSrcOptions)
+    return watch("views/!(common)/*.{jsx,js}", scriptSrcOptions)
         .pipe(scriptBrowserify());
 });
 
