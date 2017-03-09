@@ -128,7 +128,7 @@ module.exports = class RightPanel extends React.Component {
 
         if (this.props.hide && !this.state.openDrawer) {
             const pop = (
-                <PopMessage key={this.messageKey++}>
+                <PopMessage key={this.messageKey++} placement="left">
                     {message}
                 </PopMessage>
             );

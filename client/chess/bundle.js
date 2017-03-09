@@ -48569,7 +48569,7 @@ module.exports = function (_GameClientBase) {
     return ChessGameClient;
 }(GameClientBase);
 
-},{"../../games/chinese-chess/role":11,"../../games/chinese-chess/service/chessClient":12,"../common/gameClientBase":509}],502:[function(require,module,exports){
+},{"../../games/chinese-chess/role":11,"../../games/chinese-chess/service/chessClient":12,"../common/gameClientBase":510}],502:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49034,6 +49034,7 @@ var React = require("react");
 var ReactDom = require("react-dom");
 var Layout = require("./layout.jsx");
 var ChessGameClient = require("./chessGameClient");
+var GameInstruction = require("../common/gameInstruction.jsx");
 
 (0, _reactTapEventPlugin2.default)();
 
@@ -49041,11 +49042,16 @@ var client = new ChessGameClient(function () {
     ReactDom.render(React.createElement(
         _MuiThemeProvider2.default,
         null,
-        React.createElement(Layout, { client: client })
+        React.createElement(
+            "div",
+            null,
+            React.createElement(Layout, { client: client }),
+            React.createElement(GameInstruction, null)
+        )
     ), document.getElementById("container"));
 });
 
-},{"./chessGameClient":501,"./layout.jsx":505,"material-ui/styles/MuiThemeProvider":233,"react":450,"react-dom":257,"react-tap-event-plugin":414}],507:[function(require,module,exports){
+},{"../common/gameInstruction.jsx":511,"./chessGameClient":501,"./layout.jsx":505,"material-ui/styles/MuiThemeProvider":233,"react":450,"react-dom":257,"react-tap-event-plugin":414}],507:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49242,7 +49248,7 @@ module.exports = function (_React$Component) {
                 (function () {
                     var pop = React.createElement(
                         PopMessage,
-                        { key: _this3.messageKey++ },
+                        { key: _this3.messageKey++, placement: "left" },
                         message
                     );
 
@@ -49410,7 +49416,22 @@ module.exports = function (_React$Component) {
     return RightPanel;
 }(React.Component);
 
-},{"../../common/callbackManager":2,"../../games/chinese-chess/role":11,"../../games/common/gameStatus":17,"../common/chat.jsx":508,"../common/popMessage.jsx":510,"../common/roleSelect.jsx":511,"./gameAction.jsx":504,"material-ui/AppBar":22,"material-ui/Drawer":24,"material-ui/IconButton":30,"material-ui/svg-icons/navigation/close":243,"material-ui/svg-icons/navigation/menu":246,"react":450,"react-dom":257}],508:[function(require,module,exports){
+},{"../../common/callbackManager":2,"../../games/chinese-chess/role":11,"../../games/common/gameStatus":17,"../common/chat.jsx":509,"../common/popMessage.jsx":512,"../common/roleSelect.jsx":513,"./gameAction.jsx":504,"material-ui/AppBar":22,"material-ui/Drawer":24,"material-ui/IconButton":30,"material-ui/svg-icons/navigation/close":243,"material-ui/svg-icons/navigation/menu":246,"react":450,"react-dom":257}],508:[function(require,module,exports){
+"use strict";
+
+var storage = require("./storage");
+var appConfig = "appConfig";
+
+module.exports.getAppConfig = function () {
+    var config = storage.read(appConfig);
+    return config || {};
+};
+
+module.exports.setAppConfig = function (config) {
+    storage.save(appConfig, config);
+};
+
+},{"./storage":514}],509:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49468,7 +49489,7 @@ module.exports = function (_React$Component) {
     return Chat;
 }(React.Component);
 
-},{"material-ui/TextField":56,"react":450}],509:[function(require,module,exports){
+},{"material-ui/TextField":56,"react":450}],510:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49528,7 +49549,86 @@ module.exports = function () {
     return GameClientBase;
 }();
 
-},{"../../common/person.js":3,"../../common/services/chat/chatClient.js":4,"../../common/services/role/roleClient.js":6,"../../common/services/room/roomClient.js":8,"./user":512,"socket.io-client":451}],510:[function(require,module,exports){
+},{"../../common/person.js":3,"../../common/services/chat/chatClient.js":4,"../../common/services/role/roleClient.js":6,"../../common/services/room/roomClient.js":8,"./user":515,"socket.io-client":451}],511:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+var PopMessage = require("./popMessage.jsx");
+
+var appConfig = require("./appConfig");
+
+module.exports = function (_React$Component) {
+    _inherits(GameInstruction, _React$Component);
+
+    function GameInstruction(props) {
+        _classCallCheck(this, GameInstruction);
+
+        var _this = _possibleConstructorReturn(this, (GameInstruction.__proto__ || Object.getPrototypeOf(GameInstruction)).call(this, props));
+
+        var config = appConfig.getAppConfig();
+        _this.state = {
+            showed: config.showedGameInstruction
+        };
+        config.showedGameInstruction = true;
+        appConfig.setAppConfig(config);
+        return _this;
+    }
+
+    _createClass(GameInstruction, [{
+        key: "render",
+        value: function render() {
+            return this.state.showed ? null : React.createElement(
+                "div",
+                { style: {
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                        zIndex: 10000,
+                        boxSizing: "border-box"
+                    } },
+                React.createElement(
+                    PopMessage,
+                    { placement: "top" },
+                    React.createElement(
+                        "div",
+                        { style: {
+                                textAlign: "center",
+                                color: "#212121"
+                            } },
+                        "Copy the ",
+                        React.createElement(
+                            "b",
+                            null,
+                            "URL"
+                        ),
+                        " from ",
+                        React.createElement(
+                            "b",
+                            null,
+                            "addressbar"
+                        ),
+                        " and send to your friends to invite them to join the game. Any Device with mordern browser should work, enjoy the game."
+                    )
+                )
+            );
+        }
+    }]);
+
+    return GameInstruction;
+}(React.Component);
+
+},{"./appConfig":508,"./popMessage.jsx":512,"react":450}],512:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49557,7 +49657,7 @@ module.exports = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (PopMessage.__proto__ || Object.getPrototypeOf(PopMessage)).call(this, props));
 
         _this.state = {
-            show: true
+            popup: true
         };
         _this.handleTouchTap = _this.handleTouchTap.bind(_this);
         return _this;
@@ -49566,26 +49666,31 @@ module.exports = function (_React$Component) {
     _createClass(PopMessage, [{
         key: "render",
         value: function render() {
-            return React.createElement(
+
+            var placement = this.props.placement || "left";
+            var className = "popup " + placement;
+
+            return this.state.popup ? React.createElement(
                 "div",
-                { style: {
-                        display: this.state.show ? "block" : "none",
-                        padding: "15px 10px 10px 10px"
-                    }, className: "popup" },
+                { className: className },
                 React.createElement("div", { className: "arrow" }),
                 React.createElement(
                     "span",
                     { onTouchTap: this.handleTouchTap, className: "close" },
                     React.createElement(_close2.default, null)
                 ),
-                this.props.children
-            );
+                React.createElement(
+                    "div",
+                    { style: { paddingRight: 20 } },
+                    this.props.children
+                )
+            ) : null;
         }
     }, {
         key: "handleTouchTap",
         value: function handleTouchTap() {
             this.setState({
-                show: false
+                popup: false
             });
         }
     }]);
@@ -49593,7 +49698,7 @@ module.exports = function (_React$Component) {
     return PopMessage;
 }(React.Component);
 
-},{"material-ui/svg-icons/navigation/close":243,"react":450}],511:[function(require,module,exports){
+},{"material-ui/svg-icons/navigation/close":243,"react":450}],513:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49694,12 +49799,39 @@ module.exports = function (_React$Component) {
     return RoleSelect;
 }(React.Component);
 
-},{"material-ui/MenuItem":37,"material-ui/SelectField":46,"react":450}],512:[function(require,module,exports){
+},{"material-ui/MenuItem":37,"material-ui/SelectField":46,"react":450}],514:[function(require,module,exports){
 "use strict";
 
 /* global localStorage */
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+module.exports.save = function (name, content) {
+    if ((typeof Storage === "undefined" ? "undefined" : _typeof(Storage)) !== undefined) {
+        if (typeof content !== "string") {
+            content = JSON.stringify(content);
+        }
+        return localStorage.setItem(name, content);
+    }
+};
+
+module.exports.read = function (name) {
+    if ((typeof Storage === "undefined" ? "undefined" : _typeof(Storage)) !== undefined) {
+        var item = localStorage.getItem(name);
+        if (item) {
+            try {
+                return JSON.parse(item);
+            } catch (err) {
+                return item;
+            }
+        }
+    }
+};
+
+},{}],515:[function(require,module,exports){
+"use strict";
+
+var storage = require("./storage");
 
 module.exports.getDisplayName = function () {
     var displayName = loadDisplayName();
@@ -49712,15 +49844,11 @@ module.exports.getDisplayName = function () {
 };
 
 function saveDisplayName(displayName) {
-    if ((typeof Storage === "undefined" ? "undefined" : _typeof(Storage)) !== undefined) {
-        return localStorage.setItem("displayName", displayName);
-    }
+    storage.save("displayName", displayName);
 }
 
 function loadDisplayName() {
-    if ((typeof Storage === "undefined" ? "undefined" : _typeof(Storage)) !== undefined) {
-        return localStorage.getItem("displayName");
-    }
+    return storage.read("displayName");
 }
 
-},{}]},{},[506]);
+},{"./storage":514}]},{},[506]);

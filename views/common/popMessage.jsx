@@ -7,27 +7,30 @@ module.exports = class PopMessage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: true
+            popup: true
         };
         this.handleTouchTap = this.handleTouchTap.bind(this);
     }
 
     render() {
-        return (
-            <div style={{
-                display:this.state.show?"block":"none",
-                padding:"15px 10px 10px 10px"
-            }} className="popup">
+
+        const placement = this.props.placement || "left";
+        const className = "popup " + placement;
+
+        return this.state.popup ? (
+            <div className={className}>
                 <div className="arrow"></div>
                 <span onTouchTap={this.handleTouchTap} className="close"><NavigationClose /></span>
-                {this.props.children}
+                <div style={{paddingRight:20}}>
+                    {this.props.children}
+                </div>
             </div>
-        );
+        ) : null;
     }
 
     handleTouchTap() {
         this.setState({
-            show: false
+            popup: false
         });
     }
 };
