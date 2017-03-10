@@ -48700,14 +48700,42 @@ module.exports = function (_React$Component) {
             var _this2 = this;
 
             var pieces = [];
+            var space = this.props.space;
             if (this.props.gomoku) {
                 this.props.gomoku.foreach(function (p, x, y) {
-                    pieces.push(React.createElement(GomokuPiece, { key: x.toString() + y.toString(), space: _this2.props.space, role: p.role, step: p.step, x: x, y: y }));
+                    pieces.push(React.createElement(GomokuPiece, { key: x.toString() + y.toString(), space: space, role: p.role, step: p.step, x: x, y: y }));
                 });
             }
 
-            var lastSteps = [];
-            if (this.props.lastStep) {}
+            var lastStep = [];
+            if (this.props.lastStep) {
+                (function () {
+                    var key = 1;
+                    var strokeWidth = space < 50 ? 2 : 3;
+                    var stroke = "#FFC400";
+                    var length = space / 3;
+                    var halfSpace = space / 2;
+                    var x = _this2.props.lastStep.x * space + halfSpace;
+                    var y = _this2.props.lastStep.y * space + halfSpace;
+                    [{
+                        x: -1,
+                        y: -1
+                    }, {
+                        x: 1,
+                        y: -1
+                    }, {
+                        x: -1,
+                        y: 1
+                    }, {
+                        x: 1,
+                        y: 1
+                    }].forEach(function (dir) {
+                        var cx = x + halfSpace * dir.x - dir.x * strokeWidth;
+                        var cy = y + halfSpace * dir.y - dir.y * strokeWidth;
+                        lastStep.push(React.createElement("path", { key: key++, d: "M " + (cx - length * dir.x) + " " + cy + " L " + cx + " " + cy + " L " + cx + " " + (cy - length * dir.y), stroke: stroke, strokeWidth: strokeWidth, fill: "none" }));
+                    });
+                })();
+            }
 
             return React.createElement(
                 "g",
@@ -48733,7 +48761,7 @@ module.exports = function (_React$Component) {
                     )
                 ),
                 pieces,
-                lastSteps
+                lastStep
             );
         }
     }]);
@@ -48837,6 +48865,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var React = require("react");
 var GomokuBoard = require("./gomokuBoard.jsx");
 var Gomoku = require("./gomoku.jsx");
+var Row = require("./row.jsx");
 var TwoDArray = require("../../games/common/twoDArray");
 var gameStatus = require("../../games/common/gameStatus");
 var CallbackManager = require("../../common/callbackManager");
@@ -48856,7 +48885,7 @@ module.exports = function (_React$Component) {
             gomoku: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
             lastStep: undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
-            winLine: undefined
+            row: undefined
         };
 
         _this.handleTouchTap = _this.handleTouchTap.bind(_this);
@@ -48890,7 +48919,7 @@ module.exports = function (_React$Component) {
                 { style: divStyle },
                 React.createElement(
                     "svg",
-                    { width: this.space * 15, height: this.space * 15, onTouchTap: this.handleTouchTap, ref: function ref(svg) {
+                    { width: this.space * 15, height: this.space * 15, onClick: this.handleTouchTap, ref: function ref(svg) {
                             _this2.svg = svg;
                         }, style: { overflow: "hidden" } },
                     React.createElement(
@@ -48905,16 +48934,29 @@ module.exports = function (_React$Component) {
                         )
                     ),
                     React.createElement(GomokuBoard, { space: this.space }),
-                    React.createElement(Gomoku, { space: this.space, gomoku: this.state.gomoku, lastStep: this.state.lastStep })
+                    React.createElement(Gomoku, { space: this.space, gomoku: this.state.gomoku, lastStep: this.state.lastStep }),
+                    React.createElement(Row, { space: this.space, row: this.state.row })
                 )
             );
         }
     }, {
         key: "componentDidMount",
         value: function componentDidMount() {
+            var _this3 = this;
+
             var handleGameUpdate = this.handleGameUpdate.bind(this);
-            this.callbackManager.register(this.props.client.gomokuClient.onGameStarted, handleGameUpdate);
+            this.callbackManager.register(this.props.client.gomokuClient.onGameStarted, function (gameState) {
+                _this3.setState({
+                    row: undefined
+                });
+                _this3.handleGameUpdate(gameState);
+            }.bind(this));
             this.callbackManager.register(this.props.client.gomokuClient.onGameStateUpdated, handleGameUpdate);
+            this.callbackManager.register(this.props.client.gomokuClient.onGameCompleted, function (data) {
+                _this3.setState({
+                    row: data.row
+                });
+            }.bind(this));
         }
     }, {
         key: "componentWillUnmount",
@@ -48935,12 +48977,16 @@ module.exports = function (_React$Component) {
         value: function handleTouchTap(event) {
             var pos = undefined;
             var rect = this.svg.getBoundingClientRect();
+            /*
             if (event.nativeEvent.changedTouches && event.nativeEvent.changedTouches.length > 0) {
                 pos = {
                     x: Math.floor((event.nativeEvent.changedTouches[0].clientX - rect.left) / this.space),
                     y: Math.floor((event.nativeEvent.changedTouches[0].clientY - rect.top) / this.space)
                 };
-            } else if (event.nativeEvent.clientX !== undefined) {
+            }
+            
+            else */
+            if (event.nativeEvent.clientX !== undefined) {
                 pos = {
                     x: Math.floor((event.nativeEvent.clientX - rect.left) / this.space),
                     y: Math.floor((event.nativeEvent.clientY - rect.top) / this.space)
@@ -48956,7 +49002,7 @@ module.exports = function (_React$Component) {
     return GomokuGame;
 }(React.Component);
 
-},{"../../common/callbackManager":2,"../../games/common/gameStatus":12,"../../games/common/twoDArray":13,"./gomoku.jsx":506,"./gomokuBoard.jsx":507,"react":448}],509:[function(require,module,exports){
+},{"../../common/callbackManager":2,"../../games/common/gameStatus":12,"../../games/common/twoDArray":13,"./gomoku.jsx":506,"./gomokuBoard.jsx":507,"./row.jsx":513,"react":448}],509:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -49226,4 +49272,55 @@ var client = new GomokuGameClient(function () {
     ), document.getElementById("container"));
 });
 
-},{"../common/gameInstruction.jsx":499,"./gomokuGameClient":509,"./layout.jsx":511,"material-ui/styles/MuiThemeProvider":231,"react":448,"react-dom":255,"react-tap-event-plugin":412}]},{},[512]);
+},{"../common/gameInstruction.jsx":499,"./gomokuGameClient":509,"./layout.jsx":511,"material-ui/styles/MuiThemeProvider":231,"react":448,"react-dom":255,"react-tap-event-plugin":412}],513:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+
+// required attrs
+// space - number
+// row - position array
+
+module.exports = function (_React$Component) {
+    _inherits(Row, _React$Component);
+
+    function Row() {
+        _classCallCheck(this, Row);
+
+        return _possibleConstructorReturn(this, (Row.__proto__ || Object.getPrototypeOf(Row)).apply(this, arguments));
+    }
+
+    _createClass(Row, [{
+        key: "render",
+        value: function render() {
+            if (this.props.row && this.props.row.length > 1) {
+                var space = this.props.space;
+                var strokeWidth = space <= 50 ? 3 : 4;
+                var stroke = "#2196F3";
+                var start = this.props.row[0];
+                var end = this.props.row[this.props.row.length - 1];
+                var halfSpace = space / 2;
+
+                return React.createElement(
+                    "g",
+                    null,
+                    React.createElement("line", { x1: start.x * space + halfSpace, x2: end.x * space + halfSpace, y1: start.y * space + halfSpace, y2: end.y * space + halfSpace, stroke: stroke, strokeWidth: strokeWidth, strokeDasharray: "5,5" })
+                );
+            } else {
+                return null;
+            }
+        }
+    }]);
+
+    return Row;
+}(React.Component);
+
+},{"react":448}]},{},[512]);

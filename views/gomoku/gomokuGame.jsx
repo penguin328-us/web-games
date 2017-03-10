@@ -3,6 +3,7 @@
 const React = require("react");
 const GomokuBoard = require("./gomokuBoard.jsx");
 const Gomoku = require("./gomoku.jsx");
+const Row = require("./row.jsx");
 const TwoDArray = require("../../games/common/twoDArray");
 const gameStatus = require("../../games/common/gameStatus");
 const CallbackManager = require("../../common/callbackManager");
@@ -17,7 +18,7 @@ module.exports = class GomokuGame extends React.Component {
             gomoku: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
             lastStep: undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
-            winLine: undefined,
+            row: undefined,
         };
 
         this.handleTouchTap = this.handleTouchTap.bind(this);
@@ -46,7 +47,7 @@ module.exports = class GomokuGame extends React.Component {
 
         return (
             <div style={divStyle}>
-                <svg width={this.space*15} height={this.space*15} onTouchTap={this.handleTouchTap} ref={(svg)=>{this.svg = svg}} style={{overflow:"hidden"}}>
+                <svg width={this.space*15} height={this.space*15} onClick={this.handleTouchTap} ref={(svg)=>{this.svg = svg}} style={{overflow:"hidden"}}>
                     <defs>
                         <filter id="shadow" x="-20%" y="-20%" width="200%" height="200%">
                           <feOffset result="offOut" in="SourceAlpha" dx="4" dy="4" />
@@ -56,6 +57,7 @@ module.exports = class GomokuGame extends React.Component {
                     </defs>
                     <GomokuBoard space={this.space}/>
                     <Gomoku space={this.space} gomoku={this.state.gomoku} lastStep={this.state.lastStep} />
+                    <Row space={this.space} row={this.state.row} />
                 </svg>
             </div>
         );
@@ -63,8 +65,18 @@ module.exports = class GomokuGame extends React.Component {
 
     componentDidMount() {
         const handleGameUpdate = this.handleGameUpdate.bind(this);
-        this.callbackManager.register(this.props.client.gomokuClient.onGameStarted, handleGameUpdate);
+        this.callbackManager.register(this.props.client.gomokuClient.onGameStarted, ((gameState) => {
+            this.setState({
+                row: undefined
+            });
+            this.handleGameUpdate(gameState);
+        }).bind(this));
         this.callbackManager.register(this.props.client.gomokuClient.onGameStateUpdated, handleGameUpdate);
+        this.callbackManager.register(this.props.client.gomokuClient.onGameCompleted, ((data) => {
+            this.setState({
+                row: data.row
+            });
+        }).bind(this));
     }
 
     componentWillUnmount() {
@@ -82,13 +94,16 @@ module.exports = class GomokuGame extends React.Component {
     handleTouchTap(event) {
         let pos = undefined;
         var rect = this.svg.getBoundingClientRect();
+        /*
         if (event.nativeEvent.changedTouches && event.nativeEvent.changedTouches.length > 0) {
             pos = {
                 x: Math.floor((event.nativeEvent.changedTouches[0].clientX - rect.left) / this.space),
                 y: Math.floor((event.nativeEvent.changedTouches[0].clientY - rect.top) / this.space)
             };
         }
-        else if (event.nativeEvent.clientX !== undefined) {
+        
+        else */
+        if (event.nativeEvent.clientX !== undefined) {
             pos = {
                 x: Math.floor((event.nativeEvent.clientX - rect.left) / this.space),
                 y: Math.floor((event.nativeEvent.clientY - rect.top) / this.space)
