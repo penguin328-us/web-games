@@ -102,8 +102,4 @@ module.exports = class Chess {
         this.board.set(from.x, from.y, undefined);
         this.turn = this.turn === role.red ? role.black : role.red;
     }
-    
-    onWin(cb){
-        this.winCallback.add(cb);
-    }
 };

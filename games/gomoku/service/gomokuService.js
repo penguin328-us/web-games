@@ -1,13 +1,13 @@
 "use strict";
 
-const chessEvents = require("./chessEvents");
+const gomokuEvents = require("./gomokuEvents");
 const GameServiceBase = require("../../common/game-service/gameServiceBase");
 const role = require("../role");
-const Chess = require("../chess");
+const Gomoku = require("../gomoku");
 const gameStatus = require("../../common/gameStatus");
 
 const rolesDef = [{
-    value: role.red,
+    value: role.white,
     maxCount: 1
 }, {
     value: role.black,
@@ -17,10 +17,10 @@ const rolesDef = [{
     maxCount: 1000
 }];
 
-module.exports = class ChessService extends GameServiceBase {
+module.exports = class GomokuService extends GameServiceBase {
     constructor(room) {
         super(room, rolesDef, [role.red, role.black]);
-        this.chess = new Chess();
+        this.gomoku = new Gomoku();
         this.gameStatus = gameStatus.waiting;
         this.lastStep = undefined;
 
@@ -28,7 +28,7 @@ module.exports = class ChessService extends GameServiceBase {
         this.rolesReadyWaiter.onReady.add(() => {
             self.gameStatus = gameStatus.running;
             self.lastStep = undefined;
-            self.chess.reset();
+            self.gomoku.reset();
             self.setGameStarted(self.getGameState());
         });
         this.room.onEnterRoom.add((person) => {
@@ -36,42 +36,45 @@ module.exports = class ChessService extends GameServiceBase {
                 self.setGameStarted(self.getGameState(), person);
             }
         });
-        this.room.on(chessEvents.takeStep, (r, p, step) => {
-            if (this.roleService.getPerson(self.chess.turn) === p && this.gameStatus === gameStatus.running) {
-                if (self.chess.takeStep(step.from, step.to)) {
+        this.room.on(gomokuEvents.takeStep, (r, p, step) => {
+            if (this.roleService.getPerson(self.gomoku.turn) === p && this.gameStatus === gameStatus.running) {
+                if (self.gomoku.takeStep(step)) {
                     self.lastStep = step;
                     self.updateGameState(self.getGameState());
                 }
             }
         });
-        this.room.on(chessEvents.surrender, (r, p, data) => {
+        this.room.on(gomokuEvents.surrender, (r, p, data) => {
             const rl = self.roleService.getRole(p);
             if (rl === role.black) {
-                self.markGameComplete(role.red);
+                self.markGameComplete(role.white);
             }
-            else if (rl === role.red) {
+            else if (rl === role.white) {
                 self.markGameComplete(role.black);
             }
         });
-        this.chess.winCallback.add((role) => {
-            self.markGameComplete(role);
+        this.gomoku.winCallback.add((role, row) => {
+            self.markGameComplete(role, row);
         });
     }
 
-    markGameComplete(winRole) {
+    markGameComplete(winRole, row) {
         const person = this.roleService.getPerson(winRole);
         this.gameStatus = gameStatus.completed;
         this.rolesReadyWaiter.reset();
         this.setGameCompleted({
-            displayName: person ? person.displayName : undefined,
-            role: winRole
+            wins: [{
+                displayName: person ? person.displayName : undefined,
+                role: winRole
+            }],
+            row: row
         });
     }
 
     getGameState() {
         return {
-            board: this.chess.board,
-            turn: this.chess.turn,
+            board: this.gomoku.board,
+            turn: this.gomoku.turn,
             lastStep: this.lastStep,
         };
     }
