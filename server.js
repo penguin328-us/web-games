@@ -16,6 +16,9 @@ server.listen(process.env.PORT || 8080, process.env.IP || "0.0.0.0", function() 
 const chessServer = require("./games/chinese-chess/chessServer");
 chessServer.start(io);
 
+const gomokuServer = require("./games/gomoku/gomokuServer");
+gomokuServer.start(io);
+
 app.use("/newgame", (req, res) => {
   const game = req.query.game;
   if (game) {

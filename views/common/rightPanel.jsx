@@ -2,12 +2,10 @@
 
 const React = require("react");
 const ReactDom = require("react-dom");
-const RoleSelect = require("../common/roleSelect.jsx");
-const GameAction = require("./gameAction.jsx");
-const Chat = require("../common/chat.jsx");
-const PopMessage = require("../common/popMessage.jsx");
+const RoleSelect = require("./roleSelect.jsx");
+const Chat = require("./chat.jsx");
+const PopMessage = require("./popMessage.jsx");
 
-const role = require("../../games/chinese-chess/role");
 const CallbackManager = require("../../common/callbackManager");
 const gameStatus = require("../../games/common/gameStatus");
 
@@ -18,21 +16,14 @@ import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 // required attrs
-// client - ChessGameClient
+// client - gameClientBase
+// gameClient - server game client base
 // width - width of right panel
 // height - height of panel
 // hide - boolean
+// allRoles 
+// defaultRole
 
-const allRoles = [{
-    displayName: "Red",
-    value: role.red
-}, {
-    displayName: "Black",
-    value: role.black
-}, {
-    displayName: "Watcher",
-    value: role.watcher
-}];
 
 module.exports = class RightPanel extends React.Component {
 
@@ -40,7 +31,7 @@ module.exports = class RightPanel extends React.Component {
         super(props);
         this.callbackManager = new CallbackManager();
         this.state = {
-            openDrawer: this.props.client.chessClient.latestState !== gameStatus.running,
+            openDrawer: this.props.gameClient.latestState !== gameStatus.running,
             messages: [],
             popMessages: []
         };
@@ -54,10 +45,10 @@ module.exports = class RightPanel extends React.Component {
         const children = (
             <div>
                 <div style={{height:80}}>
-                    <RoleSelect allRoles={allRoles} defaultRole={role.watcher} roleClient={this.props.client.roleClient} />
+                    <RoleSelect allRoles={this.props.allRoles} defaultRole={this.props.defaultRole} roleClient={this.props.client.roleClient} />
                 </div>
                  <div style={{height:50}}>
-                    <GameAction roleClient={this.props.client.roleClient} chessClient={this.props.client.chessClient} />
+                    {this.props.children}
                 </div>
                 <div style={{height:Math.max(150,height-220),border:"1px gray solid", borderRadius:"3px", padding:5, overflowX:"hidden", overflowY:"auto"}}>
                     {this.state.messages}
@@ -94,7 +85,7 @@ module.exports = class RightPanel extends React.Component {
                     <IconButton onTouchTap={this.handleDrawerOpen}> <NavigationMenu /></IconButton>
                 </div>
                 <Drawer width={this.props.width} openSecondary={true} open={this.state.openDrawer} >
-                    <AppBar title="Chess Game" iconElementLeft={<IconButton onTouchTap={this.handleDrawerClose}><NavigationClose/></IconButton>} />
+                    <AppBar title="Web Game" iconElementLeft={<IconButton onTouchTap={this.handleDrawerClose}><NavigationClose/></IconButton>} />
                     <div style={{marginLeft:"5px", marginRight:"5px"}}>
                     {children}
                     </div>
@@ -197,7 +188,7 @@ module.exports = class RightPanel extends React.Component {
                 );
             }).bind(this));
 
-        this.callbackManager.register(this.props.client.chessClient.onReadyMessage,
+        this.callbackManager.register(this.props.gameClient.onReadyMessage,
             ((displayName, role) => {
                 this.addMessage(
                     <div key={this.messageKey++} style={success}>
@@ -206,7 +197,7 @@ module.exports = class RightPanel extends React.Component {
                 );
             }).bind(this));
 
-        this.callbackManager.register(this.props.client.chessClient.onGameStarted,
+        this.callbackManager.register(this.props.gameClient.onGameStarted,
             (() => {
                 if (this.props.hide) {
                     this.handleDrawerClose();
@@ -218,13 +209,24 @@ module.exports = class RightPanel extends React.Component {
                 );
             }).bind(this));
 
-        this.callbackManager.register(this.props.client.chessClient.onGameCompleted,
+        this.callbackManager.register(this.props.gameClient.onGameCompleted,
             ((data) => {
-                this.addMessage(
-                    <div key={this.messageKey++} style={success}>
-                        <b>{data.displayName}</b>(<b>{data.role}</b>) wins game
+                if (data.wins && data.wins.length > 0) {
+                    const wins = [];
+                    data.wins.forEach((w) => {
+                        wins.push(
+                            <span>
+                                <b>{w.displayName}</b>(<b>{w.role}</b>)
+                            </span>
+                        );
+                    });
+                    this.addMessage(
+                        <div key={this.messageKey++} style={success}>
+                        {wins} win(s) game
                     </div>
-                );
+                    );
+                }
+
             }).bind(this));
     }
 

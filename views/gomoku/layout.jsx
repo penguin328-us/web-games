@@ -1,14 +1,15 @@
 "use strict";
 
 const React = require("react");
-const ChessGame = require("./chessGame.jsx");
+const GomokuGame = require("./gomokuGame.jsx");
 const RightPanel = require("../common/rightPanel.jsx");
 const GameAction = require("./gameAction.jsx");
-const role = require("../../games/chinese-chess/role");
+
+const role = require("../../games/gomoku/role");
 
 const allRoles = [{
-    displayName: "Red",
-    value: role.red
+    displayName: "White",
+    value: role.white
 }, {
     displayName: "Black",
     value: role.black
@@ -30,13 +31,13 @@ module.exports = class Layout extends React.Component {
                 <tbody>
                 <tr>
                     <td>
-                        <ChessGame width={this.state.gameWidth} height={this.state.gameHeight} client={this.props.client} />
+                        <GomokuGame width={this.state.gameWidth} height={this.state.gameHeight} client={this.props.client} />
                     </td>
                     <td style={{width:this.state.margin}} />
                     <td>
-                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} gameClient={this.props.client.chessClient}
+                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} gameClient={this.props.client.gomokuClient}
                             allRoles={allRoles} defaultRole={role.watcher}>
-                            <GameAction roleClient={this.props.client.roleClient} chessClient={this.props.client.chessClient} />
+                            <GameAction roleClient={this.props.client.roleClient} gomokuClient={this.props.client.gomokuClient} />
                         </RightPanel>
                     </td>
                 </tr>
@@ -48,9 +49,9 @@ module.exports = class Layout extends React.Component {
     getSizeState() {
         const clientWidth = window.innerWidth;
         let clientHeight = window.innerHeight;
-        if (window.innerWidth > 800) {
+        if (clientWidth > 800) {
             clientHeight -= 3;
-            const gameWidth = Math.min(Math.round(clientHeight / 10 * 9), clientWidth - 200);
+            const gameWidth = Math.min(clientHeight, clientWidth - 200);
             const margin = 10;
             return {
                 gameWidth: gameWidth,
