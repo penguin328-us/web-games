@@ -48717,9 +48717,19 @@ module.exports = function (_React$Component) {
                     null,
                     React.createElement(
                         "radialGradient",
-                        { id: "chessPiece", cx: "50%", cy: "50%", r: "50%", fx: "50%", fy: "50%" },
-                        React.createElement("stop", { offset: "0%", style: { stopColor: "#966F33", stopOpacity: 0.8 } }),
-                        React.createElement("stop", { offset: "100%", style: { stopColor: "#663300", stopOpacity: 1 } })
+                        { id: "blackPiece", cx: "35%", cy: "45%", r: "55%", fx: "50%", fy: "50%" },
+                        React.createElement("stop", { offset: "0%", style: { stopColor: "#757575", stopOpacity: 1 } }),
+                        React.createElement("stop", { offset: "100%", style: { stopColor: "black", stopOpacity: 1 } })
+                    )
+                ),
+                React.createElement(
+                    "defs",
+                    null,
+                    React.createElement(
+                        "radialGradient",
+                        { id: "whitePiece", cx: "35%", cy: "45%", r: "55%", fx: "50%", fy: "50%" },
+                        React.createElement("stop", { offset: "0%", style: { stopColor: "white", stopOpacity: 1 } }),
+                        React.createElement("stop", { offset: "100%", style: { stopColor: "#BDBDBD", stopOpacity: 1 } })
                     )
                 ),
                 pieces,
@@ -48937,7 +48947,7 @@ module.exports = function (_React$Component) {
                 };
             }
 
-            if (pos && this.props.client.roleClient.currentRole === this.state.turn && this.props.client.gomokuClient.gameStatus === gameStatus.running && !this.state.gomoku.get(pos.x, pos.y)) {
+            if (pos && this.props.client.roleClient.currentRole === this.state.turn && this.props.client.gomokuClient.currentStatus === gameStatus.running && !this.state.gomoku.get(pos.x, pos.y)) {
                 this.props.client.gomokuClient.takeStep(pos);
             }
         }
@@ -49030,7 +49040,8 @@ module.exports = function (_React$Component) {
             var margin = Math.round(space * 0.05);
             var radius = Math.round(space / 2 - margin);
 
-            var stroke = r === role.black ? "black" : "white";
+            var stroke = r === role.black ? "black" : "#BDBDBD";
+            var fill = r === role.black ? "url(#blackPiece)" : "url(#whitePiece)";
             var textStroke = r === role.black ? "white" : "black";
             var strokeWidth = space <= 50 ? 2 : 3;
 
@@ -49044,7 +49055,7 @@ module.exports = function (_React$Component) {
             return React.createElement(
                 "g",
                 null,
-                React.createElement("circle", { cx: x1, cy: y1, r: radius - Math.min(margin, 5), stroke: stroke, strokeWidth: strokeWidth, fill: stroke, filter: "url(#shadow)" }),
+                React.createElement("circle", { cx: x1, cy: y1, r: radius - Math.min(margin, 5), stroke: stroke, strokeWidth: strokeWidth, fill: fill, filter: "url(#shadow)" }),
                 React.createElement(
                     "text",
                     { x: x1, y: y1, stroke: textStroke, style: textStyle, textAnchor: "middle", dy: "0.5ex", fill: textStroke },

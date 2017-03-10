@@ -26,9 +26,15 @@ module.exports = class Chess extends React.Component {
         return (
             <g>
                 <defs>
-                    <radialGradient id="chessPiece" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{stopColor:"#966F33",stopOpacity:0.8}} />
-                        <stop offset="100%" style={{stopColor:"#663300",stopOpacity:1}} />
+                    <radialGradient id="blackPiece" cx="35%" cy="45%" r="55%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{stopColor:"#757575",stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:"black",stopOpacity:1}} />
+                    </radialGradient>
+                </defs>
+                <defs>
+                    <radialGradient id="whitePiece" cx="35%" cy="45%" r="55%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{stopColor:"white",stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor:"#BDBDBD",stopOpacity:1}} />
                     </radialGradient>
                 </defs>
                 {pieces}

@@ -20,7 +20,8 @@ module.exports = class GomokuPiece extends React.Component {
         const margin = Math.round(space * 0.05);
         const radius = Math.round(space / 2 - margin);
 
-        const stroke = (r === role.black ? "black" : "white");
+        const stroke = (r === role.black ? "black" : "#BDBDBD");
+        const fill = (r === role.black ? "url(#blackPiece)" : "url(#whitePiece)");
         const textStroke =  (r === role.black ? "white" : "black");
         const strokeWidth = space <= 50 ? 2 : 3;
 
@@ -33,7 +34,7 @@ module.exports = class GomokuPiece extends React.Component {
 
         return (
             <g>
-                <circle cx={x1} cy={y1} r={radius-Math.min(margin,5)} stroke={stroke} strokeWidth={strokeWidth} fill={stroke} filter="url(#shadow)" />
+                <circle cx={x1} cy={y1} r={radius-Math.min(margin,5)} stroke={stroke} strokeWidth={strokeWidth} fill={fill} filter="url(#shadow)" />
                 <text x={x1} y={y1} stroke={textStroke} style={textStyle} textAnchor="middle" dy="0.5ex" fill={textStroke}>{this.props.step}</text>
             </g>
         );

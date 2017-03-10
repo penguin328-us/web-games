@@ -96,7 +96,7 @@ module.exports = class GomokuGame extends React.Component {
         }
 
         if (pos && this.props.client.roleClient.currentRole === this.state.turn &&
-            this.props.client.gomokuClient.gameStatus === gameStatus.running && !this.state.gomoku.get(pos.x, pos.y)) {
+            this.props.client.gomokuClient.currentStatus === gameStatus.running && !this.state.gomoku.get(pos.x, pos.y)) {
             this.props.client.gomokuClient.takeStep(pos);
         }
     }

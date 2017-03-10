@@ -33,6 +33,7 @@ module.exports = class Gomoku {
             }
 
             this.turn = this.turn === role.black ? role.white : role.black;
+            return true;
         }
     }
 };
