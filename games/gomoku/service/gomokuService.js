@@ -19,7 +19,7 @@ const rolesDef = [{
 
 module.exports = class GomokuService extends GameServiceBase {
     constructor(room) {
-        super(room, rolesDef, [role.red, role.black]);
+        super(room, rolesDef, [role.white, role.black]);
         this.gomoku = new Gomoku();
         this.gameStatus = gameStatus.waiting;
         this.lastStep = undefined;

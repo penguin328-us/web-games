@@ -2,8 +2,21 @@
 
 const React = require("react");
 const GomokuGame = require("./gomokuGame.jsx");
-//const RightPanel = require("./rightPanel.jsx");
+const RightPanel = require("../common/rightPanel.jsx");
+const GameAction = require("./gameAction.jsx");
 
+const role = require("../../games/gomoku/role");
+
+const allRoles = [{
+    displayName: "White",
+    value: role.white
+}, {
+    displayName: "Black",
+    value: role.black
+}, {
+    displayName: "Watcher",
+    value: role.watcher
+}];
 
 module.exports = class Layout extends React.Component {
     constructor(props) {
@@ -22,7 +35,10 @@ module.exports = class Layout extends React.Component {
                     </td>
                     <td style={{width:this.state.margin}} />
                     <td>
-                       
+                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} gameClient={this.props.client.gomokuClient}
+                            allRoles={allRoles} defaultRole={role.watcher}>
+                            <GameAction roleClient={this.props.client.roleClient} gomokuClient={this.props.client.gomokuClient} />
+                        </RightPanel>
                     </td>
                 </tr>
                 </tbody>

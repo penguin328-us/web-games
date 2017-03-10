@@ -63,8 +63,10 @@ module.exports = class ChessService extends GameServiceBase {
         this.gameStatus = gameStatus.completed;
         this.rolesReadyWaiter.reset();
         this.setGameCompleted({
-            displayName: person ? person.displayName : undefined,
-            role: winRole
+            wins: [{
+                displayName: person ? person.displayName : undefined,
+                role: winRole
+            }]
         });
     }
 

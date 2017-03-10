@@ -2,11 +2,8 @@
 
 const React = require("react");
 const GomokuBoard = require("./gomokuBoard.jsx");
-//const Chess = require("./chess.jsx");
-//const ChessSelection = require("./chessSelection.jsx");
-//const role = require("../../games/chinese-chess/role");
+const Gomoku = require("./gomoku.jsx");
 const TwoDArray = require("../../games/common/twoDArray");
-//const utils = require("../../games/chinese-chess/utils");
 const gameStatus = require("../../games/common/gameStatus");
 const CallbackManager = require("../../common/callbackManager");
 
@@ -57,7 +54,8 @@ module.exports = class GomokuGame extends React.Component {
                           <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
                         </filter>
                     </defs>
-                    <GomokuBoard space={this.space} />
+                    <GomokuBoard space={this.space}/>
+                    <Gomoku space={this.space} gomoku={this.state.gomoku} lastStep={this.state.lastStep} />
                 </svg>
             </div>
         );

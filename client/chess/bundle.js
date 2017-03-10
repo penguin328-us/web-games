@@ -48569,7 +48569,7 @@ module.exports = function (_GameClientBase) {
     return ChessGameClient;
 }(GameClientBase);
 
-},{"../../games/chinese-chess/role":11,"../../games/chinese-chess/service/chessClient":12,"../common/gameClientBase":510}],502:[function(require,module,exports){
+},{"../../games/chinese-chess/role":11,"../../games/chinese-chess/service/chessClient":12,"../common/gameClientBase":509}],502:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -48925,7 +48925,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = require("react");
 var ChessGame = require("./chessGame.jsx");
-var RightPanel = require("./rightPanel.jsx");
+var RightPanel = require("../common/rightPanel.jsx");
+var GameAction = require("./gameAction.jsx");
+var role = require("../../games/chinese-chess/role");
+
+var allRoles = [{
+    displayName: "Red",
+    value: role.red
+}, {
+    displayName: "Black",
+    value: role.black
+}, {
+    displayName: "Watcher",
+    value: role.watcher
+}];
 
 module.exports = function (_React$Component) {
     _inherits(Layout, _React$Component);
@@ -48961,7 +48974,12 @@ module.exports = function (_React$Component) {
                         React.createElement(
                             "td",
                             null,
-                            React.createElement(RightPanel, { client: this.props.client, width: this.state.panelWdith, height: this.state.panelHeight, hide: this.state.panelHidden })
+                            React.createElement(
+                                RightPanel,
+                                { client: this.props.client, width: this.state.panelWdith, height: this.state.panelHeight, hide: this.state.panelHidden, gameClient: this.props.client.chessClient,
+                                    allRoles: allRoles, defaultRole: role.watcher },
+                                React.createElement(GameAction, { roleClient: this.props.client.roleClient, chessClient: this.props.client.chessClient })
+                            )
                         )
                     )
                 )
@@ -49017,7 +49035,7 @@ module.exports = function (_React$Component) {
     return Layout;
 }(React.Component);
 
-},{"./chessGame.jsx":500,"./rightPanel.jsx":507,"react":450}],506:[function(require,module,exports){
+},{"../../games/chinese-chess/role":11,"../common/rightPanel.jsx":512,"./chessGame.jsx":500,"./gameAction.jsx":504,"react":450}],506:[function(require,module,exports){
 "use strict";
 
 var _reactTapEventPlugin = require("react-tap-event-plugin");
@@ -49051,7 +49069,289 @@ var client = new ChessGameClient(function () {
     ), document.getElementById("container"));
 });
 
-},{"../common/gameInstruction.jsx":511,"./chessGameClient":501,"./layout.jsx":505,"material-ui/styles/MuiThemeProvider":233,"react":450,"react-dom":257,"react-tap-event-plugin":414}],507:[function(require,module,exports){
+},{"../common/gameInstruction.jsx":510,"./chessGameClient":501,"./layout.jsx":505,"material-ui/styles/MuiThemeProvider":233,"react":450,"react-dom":257,"react-tap-event-plugin":414}],507:[function(require,module,exports){
+"use strict";
+
+var storage = require("./storage");
+var appConfig = "appConfig";
+
+module.exports.getAppConfig = function () {
+    var config = storage.read(appConfig);
+    return config || {};
+};
+
+module.exports.setAppConfig = function (config) {
+    storage.save(appConfig, config);
+};
+
+},{"./storage":514}],508:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _TextField = require("material-ui/TextField");
+
+var _TextField2 = _interopRequireDefault(_TextField);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+
+
+// required attrs
+// chatClient - ChatClient
+
+module.exports = function (_React$Component) {
+    _inherits(Chat, _React$Component);
+
+    function Chat(props) {
+        _classCallCheck(this, Chat);
+
+        var _this = _possibleConstructorReturn(this, (Chat.__proto__ || Object.getPrototypeOf(Chat)).call(this, props));
+
+        _this.handleKeyPress = _this.handleKeyPress.bind(_this);
+        return _this;
+    }
+
+    _createClass(Chat, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(_TextField2.default, { floatingLabelText: "Press Enter to Send Message", hintText: "message to be sent", type: "text", onKeyPress: this.handleKeyPress, fullWidth: true })
+            );
+        }
+    }, {
+        key: "handleKeyPress",
+        value: function handleKeyPress(event) {
+            var text = event.target.value;
+            if (text && event.key === 'Enter') {
+                this.props.chatClient.chat(text);
+                event.target.value = "";
+            }
+        }
+    }]);
+
+    return Chat;
+}(React.Component);
+
+},{"material-ui/TextField":56,"react":450}],509:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Person = require("../../common/person.js");
+var ChatClient = require("../../common/services/chat/chatClient.js");
+var RoomClient = require("../../common/services/room/roomClient.js");
+var RoleClient = require("../../common/services/role/roleClient.js");
+var io = require("socket.io-client");
+var user = require("./user");
+
+module.exports = function () {
+    function GameClientBase(namespace, connectedCallback) {
+        var _this = this;
+
+        _classCallCheck(this, GameClientBase);
+
+        var socket = io(namespace).connect();
+        socket.on("connect", function () {
+            _this.person = new Person(user.getDisplayName(), socket);
+            _this.chatClient = new ChatClient(_this.person);
+            _this.roleClient = new RoleClient(_this.person);
+            _this.roomClient = new RoomClient(_this.person);
+
+            if (connectedCallback) {
+                connectedCallback(_this);
+            }
+        }.bind(this));
+    }
+
+    _createClass(GameClientBase, [{
+        key: "getRoomNumber",
+        value: function getRoomNumber() {
+            var number = this.getParameterByName("room");
+            if (!number) {
+                window.location.href = "/index.html";
+            }
+            return number;
+        }
+    }, {
+        key: "getParameterByName",
+        value: function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+    }]);
+
+    return GameClientBase;
+}();
+
+},{"../../common/person.js":3,"../../common/services/chat/chatClient.js":4,"../../common/services/role/roleClient.js":6,"../../common/services/room/roomClient.js":8,"./user":515,"socket.io-client":451}],510:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+var PopMessage = require("./popMessage.jsx");
+
+var appConfig = require("./appConfig");
+
+module.exports = function (_React$Component) {
+    _inherits(GameInstruction, _React$Component);
+
+    function GameInstruction(props) {
+        _classCallCheck(this, GameInstruction);
+
+        var _this = _possibleConstructorReturn(this, (GameInstruction.__proto__ || Object.getPrototypeOf(GameInstruction)).call(this, props));
+
+        var config = appConfig.getAppConfig();
+        _this.state = {
+            showed: config.showedGameInstruction
+        };
+        config.showedGameInstruction = true;
+        appConfig.setAppConfig(config);
+        return _this;
+    }
+
+    _createClass(GameInstruction, [{
+        key: "render",
+        value: function render() {
+            return this.state.showed ? null : React.createElement(
+                "div",
+                { style: {
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                        zIndex: 10000,
+                        boxSizing: "border-box"
+                    } },
+                React.createElement(
+                    PopMessage,
+                    { placement: "top" },
+                    React.createElement(
+                        "div",
+                        { style: {
+                                textAlign: "center",
+                                color: "#212121"
+                            } },
+                        "Copy the ",
+                        React.createElement(
+                            "b",
+                            null,
+                            "URL"
+                        ),
+                        " from ",
+                        React.createElement(
+                            "b",
+                            null,
+                            "addressbar"
+                        ),
+                        " and send to your friends to invite them to join the game. Any Device with mordern browser should work, enjoy the game."
+                    )
+                )
+            );
+        }
+    }]);
+
+    return GameInstruction;
+}(React.Component);
+
+},{"./appConfig":507,"./popMessage.jsx":511,"react":450}],511:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _close = require("material-ui/svg-icons/navigation/close");
+
+var _close2 = _interopRequireDefault(_close);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require("react");
+
+
+module.exports = function (_React$Component) {
+    _inherits(PopMessage, _React$Component);
+
+    function PopMessage(props) {
+        _classCallCheck(this, PopMessage);
+
+        var _this = _possibleConstructorReturn(this, (PopMessage.__proto__ || Object.getPrototypeOf(PopMessage)).call(this, props));
+
+        _this.state = {
+            popup: true
+        };
+        _this.handleTouchTap = _this.handleTouchTap.bind(_this);
+        return _this;
+    }
+
+    _createClass(PopMessage, [{
+        key: "render",
+        value: function render() {
+
+            var placement = this.props.placement || "left";
+            var className = "popup " + placement;
+
+            return this.state.popup ? React.createElement(
+                "div",
+                { className: className },
+                React.createElement("div", { className: "arrow" }),
+                React.createElement(
+                    "span",
+                    { onTouchTap: this.handleTouchTap, className: "close" },
+                    React.createElement(_close2.default, null)
+                ),
+                React.createElement(
+                    "div",
+                    { style: { paddingRight: 20 } },
+                    this.props.children
+                )
+            ) : null;
+        }
+    }, {
+        key: "handleTouchTap",
+        value: function handleTouchTap() {
+            this.setState({
+                popup: false
+            });
+        }
+    }]);
+
+    return PopMessage;
+}(React.Component);
+
+},{"material-ui/svg-icons/navigation/close":243,"react":450}],512:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -49086,31 +49386,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var React = require("react");
 var ReactDom = require("react-dom");
-var RoleSelect = require("../common/roleSelect.jsx");
-var GameAction = require("./gameAction.jsx");
-var Chat = require("../common/chat.jsx");
-var PopMessage = require("../common/popMessage.jsx");
+var RoleSelect = require("./roleSelect.jsx");
+var Chat = require("./chat.jsx");
+var PopMessage = require("./popMessage.jsx");
 
-var role = require("../../games/chinese-chess/role");
 var CallbackManager = require("../../common/callbackManager");
 var gameStatus = require("../../games/common/gameStatus");
 
 // required attrs
-// client - ChessGameClient
+// client - gameClientBase
+// gameClient - server game client base
 // width - width of right panel
 // height - height of panel
 // hide - boolean
+// allRoles 
+// defaultRole
 
-var allRoles = [{
-    displayName: "Red",
-    value: role.red
-}, {
-    displayName: "Black",
-    value: role.black
-}, {
-    displayName: "Watcher",
-    value: role.watcher
-}];
 
 module.exports = function (_React$Component) {
     _inherits(RightPanel, _React$Component);
@@ -49122,7 +49413,7 @@ module.exports = function (_React$Component) {
 
         _this.callbackManager = new CallbackManager();
         _this.state = {
-            openDrawer: _this.props.client.chessClient.latestState !== gameStatus.running,
+            openDrawer: _this.props.gameClient.latestState !== gameStatus.running,
             messages: [],
             popMessages: []
         };
@@ -49144,12 +49435,12 @@ module.exports = function (_React$Component) {
                 React.createElement(
                     "div",
                     { style: { height: 80 } },
-                    React.createElement(RoleSelect, { allRoles: allRoles, defaultRole: role.watcher, roleClient: this.props.client.roleClient })
+                    React.createElement(RoleSelect, { allRoles: this.props.allRoles, defaultRole: this.props.defaultRole, roleClient: this.props.client.roleClient })
                 ),
                 React.createElement(
                     "div",
                     { style: { height: 50 } },
-                    React.createElement(GameAction, { roleClient: this.props.client.roleClient, chessClient: this.props.client.chessClient })
+                    this.props.children
                 ),
                 React.createElement(
                     "div",
@@ -49202,7 +49493,7 @@ module.exports = function (_React$Component) {
                 React.createElement(
                     _Drawer2.default,
                     { width: this.props.width, openSecondary: true, open: this.state.openDrawer },
-                    React.createElement(_AppBar2.default, { title: "Chess Game", iconElementLeft: React.createElement(
+                    React.createElement(_AppBar2.default, { title: "Web Game", iconElementLeft: React.createElement(
                             _IconButton2.default,
                             { onTouchTap: this.handleDrawerClose },
                             React.createElement(_close2.default, null)
@@ -49344,7 +49635,7 @@ module.exports = function (_React$Component) {
                 ));
             }.bind(this));
 
-            this.callbackManager.register(this.props.client.chessClient.onReadyMessage, function (displayName, role) {
+            this.callbackManager.register(this.props.gameClient.onReadyMessage, function (displayName, role) {
                 _this4.addMessage(React.createElement(
                     "div",
                     { key: _this4.messageKey++, style: success },
@@ -49363,7 +49654,7 @@ module.exports = function (_React$Component) {
                 ));
             }.bind(this));
 
-            this.callbackManager.register(this.props.client.chessClient.onGameStarted, function () {
+            this.callbackManager.register(this.props.gameClient.onGameStarted, function () {
                 if (_this4.props.hide) {
                     _this4.handleDrawerClose();
                 }
@@ -49374,23 +49665,36 @@ module.exports = function (_React$Component) {
                 ));
             }.bind(this));
 
-            this.callbackManager.register(this.props.client.chessClient.onGameCompleted, function (data) {
-                _this4.addMessage(React.createElement(
-                    "div",
-                    { key: _this4.messageKey++, style: success },
-                    React.createElement(
-                        "b",
-                        null,
-                        data.displayName
-                    ),
-                    "(",
-                    React.createElement(
-                        "b",
-                        null,
-                        data.role
-                    ),
-                    ") wins game"
-                ));
+            this.callbackManager.register(this.props.gameClient.onGameCompleted, function (data) {
+                if (data.wins && data.wins.length > 0) {
+                    (function () {
+                        var wins = [];
+                        data.wins.forEach(function (w) {
+                            wins.push(React.createElement(
+                                "span",
+                                null,
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    w.displayName
+                                ),
+                                "(",
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    w.role
+                                ),
+                                ")"
+                            ));
+                        });
+                        _this4.addMessage(React.createElement(
+                            "div",
+                            { key: _this4.messageKey++, style: success },
+                            wins,
+                            " win(s) game"
+                        ));
+                    })();
+                }
             }.bind(this));
         }
     }, {
@@ -49416,289 +49720,7 @@ module.exports = function (_React$Component) {
     return RightPanel;
 }(React.Component);
 
-},{"../../common/callbackManager":2,"../../games/chinese-chess/role":11,"../../games/common/gameStatus":17,"../common/chat.jsx":509,"../common/popMessage.jsx":512,"../common/roleSelect.jsx":513,"./gameAction.jsx":504,"material-ui/AppBar":22,"material-ui/Drawer":24,"material-ui/IconButton":30,"material-ui/svg-icons/navigation/close":243,"material-ui/svg-icons/navigation/menu":246,"react":450,"react-dom":257}],508:[function(require,module,exports){
-"use strict";
-
-var storage = require("./storage");
-var appConfig = "appConfig";
-
-module.exports.getAppConfig = function () {
-    var config = storage.read(appConfig);
-    return config || {};
-};
-
-module.exports.setAppConfig = function (config) {
-    storage.save(appConfig, config);
-};
-
-},{"./storage":514}],509:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _TextField = require("material-ui/TextField");
-
-var _TextField2 = _interopRequireDefault(_TextField);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require("react");
-
-
-// required attrs
-// chatClient - ChatClient
-
-module.exports = function (_React$Component) {
-    _inherits(Chat, _React$Component);
-
-    function Chat(props) {
-        _classCallCheck(this, Chat);
-
-        var _this = _possibleConstructorReturn(this, (Chat.__proto__ || Object.getPrototypeOf(Chat)).call(this, props));
-
-        _this.handleKeyPress = _this.handleKeyPress.bind(_this);
-        return _this;
-    }
-
-    _createClass(Chat, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(_TextField2.default, { floatingLabelText: "Press Enter to Send Message", hintText: "message to be sent", type: "text", onKeyPress: this.handleKeyPress, fullWidth: true })
-            );
-        }
-    }, {
-        key: "handleKeyPress",
-        value: function handleKeyPress(event) {
-            var text = event.target.value;
-            if (text && event.key === 'Enter') {
-                this.props.chatClient.chat(text);
-                event.target.value = "";
-            }
-        }
-    }]);
-
-    return Chat;
-}(React.Component);
-
-},{"material-ui/TextField":56,"react":450}],510:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Person = require("../../common/person.js");
-var ChatClient = require("../../common/services/chat/chatClient.js");
-var RoomClient = require("../../common/services/room/roomClient.js");
-var RoleClient = require("../../common/services/role/roleClient.js");
-var io = require("socket.io-client");
-var user = require("./user");
-
-module.exports = function () {
-    function GameClientBase(namespace, connectedCallback) {
-        var _this = this;
-
-        _classCallCheck(this, GameClientBase);
-
-        var socket = io(namespace).connect();
-        socket.on("connect", function () {
-            _this.person = new Person(user.getDisplayName(), socket);
-            _this.chatClient = new ChatClient(_this.person);
-            _this.roleClient = new RoleClient(_this.person);
-            _this.roomClient = new RoomClient(_this.person);
-
-            if (connectedCallback) {
-                connectedCallback(_this);
-            }
-        }.bind(this));
-    }
-
-    _createClass(GameClientBase, [{
-        key: "getRoomNumber",
-        value: function getRoomNumber() {
-            var number = this.getParameterByName("room");
-            if (!number) {
-                window.location.href = "/index.html";
-            }
-            return number;
-        }
-    }, {
-        key: "getParameterByName",
-        value: function getParameterByName(name, url) {
-            if (!url) {
-                url = window.location.href;
-            }
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
-    }]);
-
-    return GameClientBase;
-}();
-
-},{"../../common/person.js":3,"../../common/services/chat/chatClient.js":4,"../../common/services/role/roleClient.js":6,"../../common/services/room/roomClient.js":8,"./user":515,"socket.io-client":451}],511:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require("react");
-var PopMessage = require("./popMessage.jsx");
-
-var appConfig = require("./appConfig");
-
-module.exports = function (_React$Component) {
-    _inherits(GameInstruction, _React$Component);
-
-    function GameInstruction(props) {
-        _classCallCheck(this, GameInstruction);
-
-        var _this = _possibleConstructorReturn(this, (GameInstruction.__proto__ || Object.getPrototypeOf(GameInstruction)).call(this, props));
-
-        var config = appConfig.getAppConfig();
-        _this.state = {
-            showed: config.showedGameInstruction
-        };
-        config.showedGameInstruction = true;
-        appConfig.setAppConfig(config);
-        return _this;
-    }
-
-    _createClass(GameInstruction, [{
-        key: "render",
-        value: function render() {
-            return this.state.showed ? null : React.createElement(
-                "div",
-                { style: {
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        zIndex: 10000,
-                        boxSizing: "border-box"
-                    } },
-                React.createElement(
-                    PopMessage,
-                    { placement: "top" },
-                    React.createElement(
-                        "div",
-                        { style: {
-                                textAlign: "center",
-                                color: "#212121"
-                            } },
-                        "Copy the ",
-                        React.createElement(
-                            "b",
-                            null,
-                            "URL"
-                        ),
-                        " from ",
-                        React.createElement(
-                            "b",
-                            null,
-                            "addressbar"
-                        ),
-                        " and send to your friends to invite them to join the game. Any Device with mordern browser should work, enjoy the game."
-                    )
-                )
-            );
-        }
-    }]);
-
-    return GameInstruction;
-}(React.Component);
-
-},{"./appConfig":508,"./popMessage.jsx":512,"react":450}],512:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _close = require("material-ui/svg-icons/navigation/close");
-
-var _close2 = _interopRequireDefault(_close);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require("react");
-
-
-module.exports = function (_React$Component) {
-    _inherits(PopMessage, _React$Component);
-
-    function PopMessage(props) {
-        _classCallCheck(this, PopMessage);
-
-        var _this = _possibleConstructorReturn(this, (PopMessage.__proto__ || Object.getPrototypeOf(PopMessage)).call(this, props));
-
-        _this.state = {
-            popup: true
-        };
-        _this.handleTouchTap = _this.handleTouchTap.bind(_this);
-        return _this;
-    }
-
-    _createClass(PopMessage, [{
-        key: "render",
-        value: function render() {
-
-            var placement = this.props.placement || "left";
-            var className = "popup " + placement;
-
-            return this.state.popup ? React.createElement(
-                "div",
-                { className: className },
-                React.createElement("div", { className: "arrow" }),
-                React.createElement(
-                    "span",
-                    { onTouchTap: this.handleTouchTap, className: "close" },
-                    React.createElement(_close2.default, null)
-                ),
-                React.createElement(
-                    "div",
-                    { style: { paddingRight: 20 } },
-                    this.props.children
-                )
-            ) : null;
-        }
-    }, {
-        key: "handleTouchTap",
-        value: function handleTouchTap() {
-            this.setState({
-                popup: false
-            });
-        }
-    }]);
-
-    return PopMessage;
-}(React.Component);
-
-},{"material-ui/svg-icons/navigation/close":243,"react":450}],513:[function(require,module,exports){
+},{"../../common/callbackManager":2,"../../games/common/gameStatus":17,"./chat.jsx":508,"./popMessage.jsx":511,"./roleSelect.jsx":513,"material-ui/AppBar":22,"material-ui/Drawer":24,"material-ui/IconButton":30,"material-ui/svg-icons/navigation/close":243,"material-ui/svg-icons/navigation/menu":246,"react":450,"react-dom":257}],513:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();

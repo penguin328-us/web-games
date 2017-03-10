@@ -2,8 +2,20 @@
 
 const React = require("react");
 const ChessGame = require("./chessGame.jsx");
-const RightPanel = require("./rightPanel.jsx");
+const RightPanel = require("../common/rightPanel.jsx");
+const GameAction = require("./gameAction.jsx");
+const role = require("../../games/chinese-chess/role");
 
+const allRoles = [{
+    displayName: "Red",
+    value: role.red
+}, {
+    displayName: "Black",
+    value: role.black
+}, {
+    displayName: "Watcher",
+    value: role.watcher
+}];
 
 module.exports = class Layout extends React.Component {
     constructor(props) {
@@ -22,7 +34,10 @@ module.exports = class Layout extends React.Component {
                     </td>
                     <td style={{width:this.state.margin}} />
                     <td>
-                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} />
+                        <RightPanel  client={this.props.client} width={this.state.panelWdith} height={this.state.panelHeight} hide={this.state.panelHidden} gameClient={this.props.client.chessClient}
+                            allRoles={allRoles} defaultRole={role.watcher}>
+                            <GameAction roleClient={this.props.client.roleClient} chessClient={this.props.client.chessClient} />
+                        </RightPanel>
                     </td>
                 </tr>
                 </tbody>
