@@ -17,7 +17,7 @@ module.exports = class ChessGame extends React.Component {
         this.state = {
             role: client.roleClient.currentRole,
             chess: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
-            lastStep: undefined,
+            lastStep: latestGameState ? latestGameState.lastStep : undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
             select: undefined,
             runSteps: [],

@@ -48711,7 +48711,7 @@ module.exports = function (_React$Component) {
             if (this.props.lastStep) {
                 (function () {
                     var key = 1;
-                    var strokeWidth = space < 50 ? 2 : 3;
+                    var strokeWidth = 1;
                     var stroke = "#FFC400";
                     var length = space / 3;
                     var halfSpace = space / 2;
@@ -48730,9 +48730,14 @@ module.exports = function (_React$Component) {
                         x: 1,
                         y: 1
                     }].forEach(function (dir) {
-                        var cx = x + halfSpace * dir.x - dir.x * strokeWidth;
-                        var cy = y + halfSpace * dir.y - dir.y * strokeWidth;
-                        lastStep.push(React.createElement("path", { key: key++, d: "M " + (cx - length * dir.x) + " " + cy + " L " + cx + " " + cy + " L " + cx + " " + (cy - length * dir.y), stroke: stroke, strokeWidth: strokeWidth, fill: "none" }));
+                        var x2 = x + halfSpace * dir.x - dir.x * strokeWidth;
+                        var y2 = y + halfSpace * dir.y - dir.y * strokeWidth;
+                        var x1 = x2 - length * dir.x;
+                        var y1 = y2;
+                        var x3 = x2;
+                        var y3 = y2 - length * dir.y;
+
+                        lastStep.push(React.createElement("path", { key: key++, d: "M " + x1 + " " + y1 + " L " + x2 + " " + y2 + " L " + x3 + " " + y3 + " Q " + x2 + " " + y2 + " " + x1 + " " + y1, stroke: stroke, strokeWidth: strokeWidth, fill: stroke }));
                     });
                 })();
             }
@@ -48883,7 +48888,7 @@ module.exports = function (_React$Component) {
         _this.callbackManager = new CallbackManager();
         _this.state = {
             gomoku: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
-            lastStep: undefined,
+            lastStep: latestGameState ? latestGameState.lastStep : undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
             row: undefined
         };

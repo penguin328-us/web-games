@@ -23,7 +23,7 @@ module.exports = class Chess extends React.Component {
         const lastStep = [];
         if (this.props.lastStep) {
             let key = 1;
-            const strokeWidth = space < 50 ? 2 : 3;
+            const strokeWidth = 1;
             const stroke = "#FFC400";
             const length = space / 3;
             const halfSpace = space / 2;
@@ -42,10 +42,15 @@ module.exports = class Chess extends React.Component {
                 x: 1,
                 y: 1
             }].forEach((dir) => {
-                const cx = x + halfSpace * dir.x - dir.x * strokeWidth;
-                const cy = y + halfSpace * dir.y - dir.y * strokeWidth;
+                const x2 = x + halfSpace * dir.x - dir.x * strokeWidth;
+                const y2 = y + halfSpace * dir.y - dir.y * strokeWidth;
+                const x1 = x2 - length * dir.x;
+                const y1 = y2;
+                const x3 = x2;
+                const y3 = y2 - length * dir.y
+
                 lastStep.push(
-                    <path key={key++} d={`M ${cx - length * dir.x} ${cy} L ${cx} ${cy} L ${cx} ${cy - length * dir.y}`} stroke={stroke} strokeWidth={strokeWidth} fill="none"/>
+                    <path key={key++} d={`M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3} Q ${x2} ${y2} ${x1} ${y1}`} stroke={stroke} strokeWidth={strokeWidth} fill={stroke}/>
                 );
             });
         }
