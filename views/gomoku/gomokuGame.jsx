@@ -16,7 +16,7 @@ module.exports = class GomokuGame extends React.Component {
         this.callbackManager = new CallbackManager();
         this.state = {
             gomoku: latestGameState ? new TwoDArray(latestGameState.board.x, latestGameState.board.y, latestGameState.board.array) : undefined,
-            lastStep: undefined,
+            lastStep: latestGameState ? latestGameState.lastStep : undefined,
             turn: latestGameState ? latestGameState.turn : undefined,
             row: undefined,
         };
